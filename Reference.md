@@ -41,6 +41,8 @@ awk '/^>/ {
 ---
 # 水稻(Oryza sativa) 
 
+**GO**
+
 > [我查完了，真的没有了 | 2025年中最全汇总之水稻常用数据库](https://mp.weixin.qq.com/s/ypXhQgVWu9-vYeLrJ8s34g)
 
 ---
@@ -60,5 +62,5 @@ awk '/^>/ {
 - **Editor:** yangdong (yangdong@genomics.cn)
 - **GitHub:** [ydgenomics](https://github.com/ydgenomics)
 - **Prospect:** Focused on innovative, competitive, open-source projects and collaboration
-- **Repository:** []()
+- **Repository:** [WDL/Reference.md](https://github.com/ydgenomics/WDL/blob/main/Reference.md)
 ---
