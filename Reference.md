@@ -54,7 +54,7 @@ awk '/^>/ {
 ---
 # 棉花(Zea mays)(Cotton)
 
-
+> [【Nature Plants】微生物所孔照胜课题组揭示棉花纤维细胞极性生长机制](https://mp.weixin.qq.com/s/9pwZLuqAdIdBt3YjrC7szg)
 > [中棉所生物信息中心与多家单位联合发布棉花多组学数据库](https://mp.weixin.qq.com/s/5fjQTzFnlPh1oNsrTyD5OQ)
 
 ---
