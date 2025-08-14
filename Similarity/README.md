@@ -1,15 +1,15 @@
 # Cluster/Cell similarity with `jaccard`, `hclust` and [metaNeighbor](https://github.com/maggiecrow/MetaNeighbor)
 - **Brief:** 不同分组下各个群的相似性
-- **Fature**
+- **Fature** 优化输出，要输出更美
 - **Log:**
-  - 250815 增添了`only_metaNeighbor`的判断默认只运行`metaNeighbor`，检查metaNeighbor运行的矩阵对象为`counts`，解决了可视化热图颜色块不显示的问题
-- **Tradition:**
+  - 250815(v1.1.4) 增添了`only_metaNeighbor`的判断默认只运行`metaNeighbor`，检查metaNeighbor运行的矩阵对象为`counts`，解决了可视化热图颜色块不显示的问题
+- **Tradition:** `cell_similarity` `jm`
 
 ---
 # Input
 - **Variable**
   - `rds` 包含分组信息和cluster信息的rds对象，只跑metaNeighbor只需要rds包含`RNA@counts`,提取`counts`作为singlecellexperiment对象
-  - `prefix` 每个`rds`运行之后输出文件的后缀，顺序对应
+  - `prefix` 每个`rds`运行之后输出文件的前缀，顺序对应
   - `sankey_order` 每个`rds`里面`batch_key`用','连接用于设定sankey plot的顺序
   - `batch_key` 分组信息键，默认每个`rds`文件的`batch_key`一致
   - `cluster_key` 分群信息键，默认每个`rds`文件的`cluster_key`一致
@@ -19,35 +19,36 @@
 # Output
 主要看metaNeighbor结果，hclust和jaccard的结果仅供参考
 - **Interpretation**
+  - 热图可视化相似性AUROC
+  - sankey图默认仅展示相似性大于0.8的条目`slimit=0.80`
+  - .csv文件为矩阵文件，可供个性化分析可视化
 
 ---
 # Detail
 - **Overview**
 
 - **Software**
-  - **MetaNeighbor**: The output is an AUROC matrix, where each value represents the similarity between cell types across batches or datasets. Higher AUROC values indicate greater similarity and more consistent annotation between datasets.
+  - **metaNeighbor**: The output is an AUROC matrix, where each value represents the similarity between cell types across batches or datasets. Higher AUROC values indicate greater similarity and more consistent annotation between datasets.
 
 - **Image**
+  - **metaNeighbor--08** 供`git clone`维护流程用
+  - **metaNeighbor--07**
 
-`as.SingleCellExperiment()` 是 Seurat 提供的方法，用于将 Seurat 对象转换为 SingleCellExperiment 对象（Bioconductor 生态常用的单细胞数据结构）。
-转换后的 SingleCellExperiment 对象会保留：
-  表达矩阵（默认是 RNA assay 的 data 槽，即 log-normalized 数据）
-  细胞元数据（colData，对应 Seurat 的 meta.data）
-  基因元数据（rowData，对应 Seurat 的 feature metadata）
-  降维结果（如 PCA、UMAP，存储在 reducedDims 中）
+- **test**
+`as.SingleCellExperiment()` 是 Seurat 提供的方法，用于将 Seurat 对象转换为 SingleCellExperiment 对象（Bioconductor 生态常用的单细胞数据结构）。转换后的 SingleCellExperiment 对象会保留：表达矩阵（默认是 RNA assay 的 data 槽，即 log-normalized 数据;细胞元数据（colData，对应 Seurat 的 meta.data）; 基因元数据（rowData，对应 Seurat 的 feature metadata）；降维结果（如 PCA、UMAP，存储在 reducedDims 中）
 ```R
-# 方法 1：直接提取 counts 并构建 SCE
+# 方法 1：直接提取 Seurat的counts 并构建 SCE
 sce <- SingleCellExperiment(
   assays = list(counts = GetAssayData(sdata, slot = "counts")),
   colData = sdata@meta.data
 )
-
 # 方法 2：使用 Seurat::as.SingleCellExperiment() 并指定 slot
 sce <- as.SingleCellExperiment(sdata, assay = "RNA", slot = "counts")
 ```
 
 ```R
 #使用MetaNeighbor计算每个批次中细胞类型之间的相关性
+library(MetaNeighbor)
 Aurocs_matrix = MetaNeighborUS(var_genes = global_hvgs, 
                                dat = cca.results.sce, 
                                study_id = cca.results.sce$batch, 
@@ -67,5 +68,4 @@ Aurocs_matrix = MetaNeighborUS(var_genes = global_hvgs, 
 - **Editor:** yangdong (yangdong@genomics.cn)
 - **GitHub:** [ydgenomics](https://github.com/ydgenomics)
 - **Prospect:** Focused on innovative, competitive, open-source projects and collaboration
-- **Repository:** [Scripts/enrich_scRNAseq](https://github.com/ydgenomics/Scripts/tree/main/enrich_scRNAseq)
----
+- **Repository:** [Similarity](https://github.com/ydgenomics/WDL/tree/main/Similarity)
