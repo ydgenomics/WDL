@@ -1,3 +1,5 @@
+### Date: 250815
+
 import pandas as pd
 import sys
 import plotly.graph_objects as go
@@ -21,11 +23,15 @@ MT = pd.read_table(path, sep=',', header=0)
 MT.head()
 
 def sanky_plot(MT,seq,limit):
-    sequences=[]
-    with open(seq,'r') as f:
+    # sequences=[]
+    # with open(seq,'r') as f:
+    #     for line in f:
+    #          elem = ''.join(line.strip('\n').split(','))
+    #          sequences.append(elem)
+    sequences = []
+    with open(seq, 'r') as f:
         for line in f:
-             elem = ''.join(line.strip('\n').split(','))
-             sequences.append(elem)
+            sequences.extend(line.strip('\n').split(','))
     temp=MT.melt(id_vars=['Unnamed: 0'])
     temp0=temp
     ##deleting rows not satisfy the sequence    
