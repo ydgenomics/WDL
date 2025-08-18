@@ -40,7 +40,7 @@ file_paths  <- unlist(strsplit(opt$file_paths,  split = "|", fixed = TRUE))
 cluster_key <- unlist(strsplit(opt$cluster_key,    split = "|", fixed = TRUE))
 cluster_value <- unlist(strsplit(opt$cluster_value, split = "|", fixed = TRUE))
 plot_keys   <- unlist(strsplit(opt$plot_keys,   split = "|", fixed = TRUE))
-r_value     <- opt$r_value
+r_value     <- opt$r_value; r_value <- round(as.numeric(opt$r_value), 1)
 name        <- opt$name
 
 
@@ -50,6 +50,7 @@ print(cluster_key)
 print(cluster_value)
 plot_keys <- c(plot_keys,paste0("RNA_snn_res.",as.character(r_value)))
 print(plot_keys)
+print(r_value)
 print(name)
 
 
