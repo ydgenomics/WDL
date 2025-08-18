@@ -1,4 +1,4 @@
-### Date: 250805 scrublet_estimate.py
+### Date: 250814 scrublet_estimate.py
 ### Image: scrublet-py-- /opt/conda/bin/python
 ### Coder: ydgenomics
 ### Output: Marker_csv: gene, cluster, p_val_adj, avg_log2FC
@@ -172,10 +172,10 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     print(adata.obs.columns)
     print(adata.obs[group_key].value_counts())
 
-    # Set parameters for figures
-    sc.settings.verbosity = 3
-    sc.logging.print_versions()
-    sc.settings.set_figure_params(dpi=80, facecolor='white')
+    # # Set parameters for figures
+    # sc.settings.verbosity = 3
+    # sc.logging.print_versions()
+    # sc.settings.set_figure_params(dpi=80, facecolor='white')
 
     # Check mitochondrial genes and filter
     if os.path.exists(mito_genes):
@@ -295,7 +295,7 @@ def run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, inpu
         [("filter", matrix_files), ("splice", splice_files), ("unsplice", unsplice_files)]
         if (len(splice_files) == len(matrix_files) == len(unsplice_files) and
             all(s != m for s, m in zip(splice_files, matrix_files)) and
-            all(u != m for u, m in zip(unsplice_files, matrix_files)))
+            len(set(splice_files) & set(unsplice_files)) == 0)
         else [("filter", matrix_files)]
     )
     if len(matrix_files) > 0:
