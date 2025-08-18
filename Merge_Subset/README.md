@@ -14,7 +14,7 @@
   - `plot_keys ` Array [String] 期待可视化键名，与上面的大list一一对应，小list里面可视化多个键用,连接； 例如"sample,leiden_res_0.50"
   - `r_value` Array [Float] 降维的resolution，与上面的大list一一对应
   - `prefix` Array [String] 整合后文件输出的前缀
-  - `mem_merge` Int 内存资源(GB)
+  - `mem_merge_subset` Int 内存资源(GB)
 
 ---
 # Output
