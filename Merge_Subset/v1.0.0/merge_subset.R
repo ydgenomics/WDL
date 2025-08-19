@@ -12,19 +12,19 @@ library(optparse)
 ## 1. 定义选项及默认值 -------------------------------------------------
 option_list <- list(
   make_option(c("-f", "--file_paths"),
-              type = "character", default = "/data/work/cotton/output/subset/cotton_K2.hr.rds.rds /data/work/cotton/output/subset/cotton_C1.hr.rds.rds /data/work/cotton/output/subset/cotton_D3.hr.rds.rds /data/work/cotton/output/subset/cotton_G3.hr.rds.rds /data/work/cotton/output/subset/cotton_E1.hr.rds.rds",
+              type = "character", default = "/data/work/cotton/output/subset/cotton_K2.hr.rds.rds|/data/work/cotton/output/subset/cotton_C1.hr.rds.rds|/data/work/cotton/output/subset/cotton_D3.hr.rds.rds|/data/work/cotton/output/subset/cotton_G3.hr.rds.rds|/data/work/cotton/output/subset/cotton_E1.hr.rds.rds",
               help = "Comma-separated RDS file paths"),
   make_option(c("-k", "--cluster_key"),
-              type = "character", default = "leiden_res_0.50 leiden_res_0.50 leiden_res_0.50 leiden_res_0.50 leiden_res_0.50",
+              type = "character", default = "leiden_res_0.50|leiden_res_0.50|leiden_res_0.50|leiden_res_0.50|leiden_res_0.50",
               help = "Meta.data column name for subsetting [default %default]"),
   make_option(c("-v", "--cluster_value"),
-              type = "character", default = "5 5 3 5 2",
+              type = "character", default = "5|5|3|5|2",
               help = "Comma-separated cluster values to keep [default %default]"),
   make_option(c("-p", "--plot_keys"),
-              type = "character", default = "sample leiden_res_0.50",
+              type = "character", default = "sample|leiden_res_0.50",
               help = "Comma-separated keys for UMAP plotting [default %default]"),
   make_option(c("-r", "--r_value"),
-              type = "character", default = "0.2",
+              type = "numeric", default = 0.2,
               help = "Clustering resolution [default %default]"),
   make_option(c("-n", "--name"),
               type = "character", default = "cotton_fibre",
@@ -40,7 +40,7 @@ file_paths  <- unlist(strsplit(opt$file_paths,  split = "|", fixed = TRUE))
 cluster_key <- unlist(strsplit(opt$cluster_key,    split = "|", fixed = TRUE))
 cluster_value <- unlist(strsplit(opt$cluster_value, split = "|", fixed = TRUE))
 plot_keys   <- unlist(strsplit(opt$plot_keys,   split = "|", fixed = TRUE))
-r_value     <- opt$r_value; r_value <- round(as.numeric(opt$r_value), 1)
+r_value     <- opt$r_value
 name        <- opt$name
 
 
