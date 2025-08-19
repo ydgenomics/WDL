@@ -18,7 +18,7 @@ option_list <- list(
     help = "Assay name for the output file"
   ),
   make_option(c("-m", "--main_layer"),
-    type = "character", default = "RNA",
+    type = "character", default = "counts",
     help = "Main layer name for the output file"
   )
 )
