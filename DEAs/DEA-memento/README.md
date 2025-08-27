@@ -18,6 +18,10 @@
   - `boxplot` 箱线图可视化前几个基因在不同处理下不同样本的分布
   - `2d text` 不建议运行，计算前几个基因与其它基因的相关性
 
+> [https://www.nature.com/articles/s41598-025-96683-3](https://www.nature.com/articles/s41598-025-96683-3) `To identify DEGs in the NE subtypes, we employed Memento64, a tool developed by researchers at the University of California, San Francisco, who were among the first to utilize the method of moments statistical framework.`
+> [https://pmc.ncbi.nlm.nih.gov/articles/PMC11722411/#S10](https://pmc.ncbi.nlm.nih.gov/articles/PMC11722411/#S10) `We conducted an additional cell-type specific differential expression analysis of control vs drug-treated cells using an alternative independent tool: Memento52. Memento uses an efficient bootstrapping method alongside method of moments estimation to compare the distributional parameters of genes’ differential expression, while making no assumptions about the underlying transcript count distribution. Memento analysis estimated both drug dependent and time dependent changes by using sex as a covariate and time after treatment as a factor of interest. Sequencing saturation was taken from the cellranger count 10x_metrics.csv output and multiplied by 0.25 to obtain the capture rate, as instructed by memento documentation. We used the memento ht_1d_moments function with 5000 bootstraps. `
+
+
 ---
 # Detail
 - **Overview**
