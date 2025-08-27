@@ -16,7 +16,7 @@
   - `batch_key` 分组信息键，默认每个`rds`文件的`batch_key`一致
   - `cluster_key` 分群信息键，默认每个`rds`文件的`cluster_key`一致
   - `mem_similarity` 运行similarity的资源(GB)
-- **Example** [download]()
+- **Example** [download](https://github.com/ydgenomics/WDL/blob/main/Similarity/v1.1.4/Similarity_v1.1.4.csv)
 
 | EntityID | rds | prefix | sankey_order | batch_key | cluster_key | mem_similarity |
 |-|-|-|-|-|-|-|
