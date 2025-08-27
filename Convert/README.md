@@ -16,7 +16,7 @@
 
 h5ad转rds时，会默认先用layers['counts']赋值给.X后再转为RNA$counts，保证了输出的h5ad为原始文件, 如果没有layers['counts']才直接.X转
 
-- **csv** [download]()
+- **csv** [download](https://github.com/ydgenomics/WDL/blob/main/Convert/v1.0.1/Convert_v1.0.1.csv)
 - **Example** 
 
 | EntityID | input_file | layers | mem_scdatacg |
@@ -57,6 +57,8 @@ tree /data/input/Files/yangdong/wdl/SCP/Convert/W202508270039982
 ---
 # Detail
 - **Pipeline**
+  - **rds2h5ad** 先根据Assay进行拆分为多个rds文件，然后对每个Assay的counts转h5ad，最后将多个h5ad按layers合并，RNA@counts默认为.X。可以通过指定`layers`来控制需要转的矩阵，`all`即转全部
+  - **h5ad2rds** 先根据layers进行拆分为多个h5ad文件，然后对每个layers的h5ad转rds, 最后将多个rds按Assay合并，RNA@counts默认为.layers['counts']。同上可以进行矩阵指定。*值得注意的是h5ad转rds会补齐counts和data矩阵，此时data矩阵其实也是原始矩阵==counts，如果后续分析需要标准化的矩阵，请做处理后使用*。
 
 - **Software**
   - sceasy
@@ -67,12 +69,12 @@ tree /data/input/Files/yangdong/wdl/SCP/Convert/W202508270039982
 
 ---
 # Reference & Citation
-> 
-
+> [100w个细胞的单细胞h5ad对象转换为seurat：python版本](https://mp.weixin.qq.com/s/DxgZ-p9b51mzGASpxyhPNw)
+> [认识单细胞分析中的各种数据结构](https://mp.weixin.qq.com/s/D7a2RlbJttaOlUNDAU5P3Q)
 
 ---
 # Coder
 - **Editor:** yangdong (yangdong@genomics.cn)
 - **GitHub:** [ydgenomics](https://github.com/ydgenomics)
 - **Prospect:** Focused on innovative, competitive, open-source projects and collaboration
-- **Repository:** [Convert]()
+- **Repository:** [WDL/Convert](https://github.com/ydgenomics/WDL/tree/main/Convert)
