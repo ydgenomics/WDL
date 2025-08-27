@@ -11,26 +11,26 @@
 # Input
 - **Variable**
   - DEA-Seurat
-    - `rds` 做过标准化处理的rds文件，meta.data包含相应的信息(cluster_key & batch_key)
-    - `prefix` 输出文件的前缀，与rds一一对应
-    - `cluster_key` 储存分群信息的键见meta.data的列名
-    - `only_pos` 是否只保留上调基因 "yes" or "no"
-    - `mem_markers` markers运行的内存资源(GB)
-    - `batch_key` 储存批次信息的键见meta.data的列名，如果为空则不运行FindConservedMarkers
+    - `rds` Array [File] 做过标准化处理的rds文件，meta.data包含相应的信息(cluster_key & batch_key)
+    - `prefix` Array [String] 输出文件的前缀，与rds一一对应
+    - `cluster_key` String 储存分群信息的键见meta.data的列名
+    - `only_pos` String 是否只保留上调基因 "yes" or "no"
+    - `mem_markers` ?Int markers运行的内存资源(GB)
+    - `batch_key` String 储存批次信息的键见meta.data的列名，如果为空则不运行FindConservedMarkers
   - DEA-memento
-    - `input_h5ad` .X为原始数据的h5ad文件，.obs包含相应的信息(group_key & sample_key)
-    - `group_key` 储存对照信息(两份组)的键名见adata.obs.columns
-    - `control_value` group_key中控制组的值见`adata.obs[group_key].unique()`
-    - `sample_key` 储存样本信息的键名
-    - `top_number` 额外可视化最特异基因的数量
-    - `mem_memento` 运行memento需要的内存(GB)
+    - `input_h5ad` File .X为原始数据的h5ad文件，.obs包含相应的信息(group_key & sample_key)
+    - `group_key` String 储存对照信息(两份组)的键名见adata.obs.columns
+    - `control_value` String group_key中控制组的值见`adata.obs[group_key].unique()`
+    - `sample_key` String 储存样本信息的键名
+    - `top_number` Int 额外可视化最特异基因的数量
+    - `mem_memento` Int 运行memento需要的内存(GB)
   - DEA-FindMarkers
-    - `rds` 做过标准化处理的rds文件，meta.data包含相应的信息(cluster_key)
-    - `prefix` 输出文件的前缀，与rds一一对应
-    - `ident_1` 控制组在cluster_key的unique值`unique(seu@metadata[[cluster_key]])`
-    - `ident_2` 对照组在cluster_key的unique值
-    - `cluster_key` 储存对照信息(两份组)的键名见`colnames(seu@meta.data)`
-    - `mem_findmarkers` 运行findmarkers需要的内存(GB)
+    - `rds` Array [File] 做过标准化处理的rds文件，meta.data包含相应的信息(cluster_key)
+    - `prefix` Array [String] 输出文件的前缀，与rds一一对应
+    - `ident_1` Array [String] 控制组在cluster_key的unique值`unique(seu@metadata[[cluster_key]])`
+    - `ident_2` Array [String] 对照组在cluster_key的unique值
+    - `cluster_key` String 储存对照信息(两份组)的键名见`colnames(seu@meta.data)`
+    - `mem_findmarkers` Int 运行findmarkers需要的内存(GB)
 
 - **Example** 
 
