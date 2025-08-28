@@ -22,7 +22,7 @@
   - `mem_scib` Int 运行mem_scib需要的内存资源
 
 **Note**: scib-metrics计算的十个指标(BioConservation: isolated_labels, nmi_ari_cluster_labels_leiden, nmi_ari_cluster_labels_kmeans, silhouette_label, clisi_knn; BatchCorrection: silhouette_batch, ilisi_knn, kbet_per_label, graph_connectivity, pcr_comparison); 需要重新计算pca的是`seuratRPCA`方法; 资源投递参考项目数据大小调整
-- **Example** [download]()
+- **Example** [download](https://github.com/ydgenomics/WDL/blob/main/scIB/v1.0.1/scIB_v1.0.1.csv)
 
 | EntityID | unintegrated_h5ad | integrated_file | species | batch_key | label_key | methods_file | pcas_file | deals_file | tests_file | mem_scdatacg | mem_scib |
 |-|-|-|-|-|-|-|-|-|-|-|-|
@@ -75,3 +75,10 @@ tree /data/input/Files/yangdong/wdl/SCP/Integration/W202508120010920/scib
 > [单细胞整合用哪种方法好，北大张泽民院士的这篇Cancer Cell直接解决了咱们的困惑](https://mp.weixin.qq.com/s/DK91JN-hsYSZW0BaMeetxw)
 > [单细胞系列工具之整合及效果评价](https://mp.weixin.qq.com/s/NfQkky-pklJWVbQrazDGxg)
 > [Nat Methods | 利用scib-metrics包对单细胞数据多个去批次方法进行测评](https://mp.weixin.qq.com/s/UDLGocdHHNjxWsIqPU0oNw)
+
+---
+# Coder
+- **Editor:** yangdong (yangdong@genomics.cn)
+- **GitHub:** [ydgenomics](https://github.com/ydgenomics)
+- **Prospect:** Focused on innovative, competitive, open-source projects and collaboration.
+- **Repository:** [WDL/scIB](https://github.com/ydgenomics/WDL/tree/main/scIB)
