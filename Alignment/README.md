@@ -12,7 +12,7 @@
   - `fasta2` 待比对的蛋白质序列fasta文件
   - `method` 使用的序列比对软件可选 "diamond" or "blastp", 默认比对速度更快的`diamond`
   - `mem_alignment` 比对使用的内存GB
-- **Example** [download]()
+- **Example** [download](https://github.com/ydgenomics/WDL/blob/main/Alignment/v1.0.0/Alignment_v1.0.0.csv)
 
 | EntityID | fasta1 | fasta2 | method | mem_alignment |
 |-|-|-|-|-|
@@ -25,7 +25,6 @@
 reciprocal_best.txt
 ```
 - **Next**
-  - 鉴定同源转录因子
   - Anno-singler 数据映射
 - **Interpretation**
   - `reciprocal_best.txt` 最佳的一对一比对关系
@@ -62,5 +61,5 @@ conda install bioconda::diamond -y
 - **Editor:** yangdong (yangdong@genomics.cn)
 - **GitHub:** [ydgenomics](https://github.com/ydgenomics)
 - **Prospect:** Focused on innovative, competitive, open-source projects and collaboration
-- **Repository:** []()
+- **Repository:** [WDL/Alignment](https://github.com/ydgenomics/WDL/tree/main/Alignment)
 
