@@ -14,7 +14,7 @@
   - `layers` 要转换的矩阵，如果转所有矩阵则输入`all`，如果只保留.layers['counts']或RNA@counts则输入`RNA`
   - `mem_scdatacg` scdatacg需要的内存(GB)
 
-h5ad转rds时，会默认先用layers['counts']赋值给.X后再转为RNA$counts，保证了输出的h5ad为原始文件, 如果没有layers['counts']才直接.X转
+**Note:** h5ad转rds时，会默认先用layers['counts']赋值给.X后再转为RNA$counts，保证了输出的h5ad为原始文件, 如果没有layers['counts']才直接.X转
 
 - **csv** [download](https://github.com/ydgenomics/WDL/blob/main/Convert/v1.0.1/Convert_v1.0.1.csv)
 - **Example** 
@@ -59,11 +59,14 @@ tree /data/input/Files/yangdong/wdl/SCP/Convert/W202508270039982
 - **Pipeline**
   - **rds2h5ad** 先根据Assay进行拆分为多个rds文件，然后对每个Assay的counts转h5ad，最后将多个h5ad按layers合并，RNA@counts默认为.X。可以通过指定`layers`来控制需要转的矩阵，`all`即转全部
   - **h5ad2rds** 先根据layers进行拆分为多个h5ad文件，然后对每个layers的h5ad转rds, 最后将多个rds按Assay合并，RNA@counts默认为.layers['counts']。同上可以进行矩阵指定。*值得注意的是h5ad转rds会补齐counts和data矩阵，此时data矩阵其实也是原始矩阵==counts，如果后续分析需要标准化的矩阵，请做处理后使用*。
-
 - **Software**
   - sceasy
   - schard
-
+- **Script**
+  - deal_layers_ydgenomics.py
+  - convert_rdsAh5ad.R
+  - convert_rdsAh5ad2.R
+  - convert.sh
 - **Image**
   - sceasy-schard--10 sceasy-schard--02
 
