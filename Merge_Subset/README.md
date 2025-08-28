@@ -17,7 +17,7 @@
   - `r_value` Array [Float] 降维的resolution，与上面的大list一一对应
   - `prefix` Array [String] 整合后文件输出的前缀
   - `mem_merge_subset` Int 内存资源(GB)
-- **Example** [download]()
+- **Example** [download](https://github.com/ydgenomics/WDL/blob/main/Merge_Subset/v1.0.0/Merge_Subset_v1.0.0.csv)
 
 | EntityID | input_rds1 | input_rds2 | input_rds3 | input_rds4 | input_rds5 | cluster_key1 | cluster_key2 | cluster_key3 | cluster_key4 | cluster_key5 | cluster_value1 | cluster_value2 | cluster_value3 | cluster_value4 | cluster_value5 | plot_keys | r_value | prefix | mem_merge_subset |
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
@@ -26,12 +26,29 @@
 ---
 # Output
 - **Frame**
-```sehll
+```shell
+tree /data/input/Files/yangdong/wdl/SCP/Merge_Subset/W202508270022225
+/data/input/Files/yangdong/wdl/SCP/Merge_Subset/W202508270022225
+├── cotton_fibre_0.5
+│   ├── cotton_C1.hr.rds.rds
+│   ├── cotton_C1.hr.rds_umap.pdf
+│   ├── cotton_D3.hr.rds.rds
+│   ├── cotton_D3.hr.rds_umap.pdf
+│   ├── cotton_E1.hr.rds.rds
+│   ├── cotton_E1.hr.rds_umap.pdf
+│   ├── cotton_fibre_0.5.rds
+│   ├── cotton_fibre_0.5_umap.pdf
+│   ├── cotton_G3.hr.rds.rds
+│   ├── cotton_G3.hr.rds_umap.pdf
+│   ├── cotton_K2.hr.rds.rds
+│   └── cotton_K2.hr.rds_umap.pdf
+└── input.json
 
+2 directories, 13 files
 ```
 - **Next**
-  - Track-pseudotime
-  - Similarity
+  - Track-pseudotime 取子集的数据做拟时序分析
+  - Similarity 整合后的数据查看分组间的cluster相似性
 - **Interpretation**
   - `umap.pdf` 包含整合后降维可视化umap图和单独对象的umap图
   - `.rds` 包含整合后的.rds和单独对象标准化流程的.rds
@@ -44,13 +61,12 @@
   3. 确定好对象是否取子集后就运行Seurat标准流程(标准化、降维、聚类和可视化)
   4. 判断rds文件地址数量是否大于1，大于1则做Merge，Merge过程中同第二步的处理
   5. 将单独降维得到的分辨率的值重命名为`*_0`，为整个对象降维留出键，最后可视化整个对象
-
 - **Software**
   - Seurat
-
+- **Script**
+  - merge_subset.R
 - **Image**
   - metaNeighbor--08 
-
 - **Test**
 ```R
 seurat_pipeline <- function(seu, r_value, plot_keys, prefix){
@@ -74,11 +90,12 @@ seurat_pipeline <- function(seu, r_value, plot_keys, prefix){
 
 ---
 # Reference & Citation
-> 
+> [单细胞亚群取子集后的细分亚群再命名的两个难题](https://mp.weixin.qq.com/s/IfLm9MOpm6RKjCsXy_1AWw)
+> [提取单细胞亚群进行后续再分析](https://mp.weixin.qq.com/s/dtsrP6AZx4_fHiVxeHxfZQ)
 
 ---
 # Coder
 - **Editor:** yangdong (yangdong@genomics.cn)
 - **GitHub:** [ydgenomics](https://github.com/ydgenomics)
 - **Prospect:** Focused on innovative, competitive, open-source projects and collaboration
-- **Repository:** [WDL/Merge_Subset]()
+- **Repository:** [WDL/Merge_Subset](https://github.com/ydgenomics/WDL/tree/main/Merge_Subset)
