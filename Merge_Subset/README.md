@@ -1,4 +1,4 @@
-# `Merge_Subset` uses to merge mutiple seurat objects(including subseted data)
+# `Merge_Subset` is used to merge mutiple seurat objects(including subseted data)
 - **Brief:** 将多个Seurat对象(.rds)整合为一个对象同时满足取子集(subset)后再整合，整合后重新标准化、降维、聚类和可视化
 - **Fature** 
 - **Log:** 
