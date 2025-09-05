@@ -1,6 +1,6 @@
 # Cluster/Cell similarity with `jaccard`, `hclust` and [metaNeighbor](https://github.com/maggiecrow/MetaNeighbor)
 - **Brief:** 分组数据间各个cluster的相似性
-- **Fature** 优化输出可视化sankeyplot加颜色，heatmap.pdf的大小关联分群数量
+- **Fature** 优化输出可视化sankeyplot加颜色
 - **Log:**
   - v1.1.4
     - 250905 sankey_order设置太麻烦了，修改为非必填项，无输入则可自动构建order; 修改pdf输出大小的判断，会根据亚群数目设置pdf宽度，环状热图经常报错已经取消，有需要可以在仓库的PLOT找到plot.ipynb作为个性化可视化
