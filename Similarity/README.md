@@ -21,7 +21,7 @@
 
 | EntityID | rds | prefix | sankey_order | batch_key | cluster_key | mem_similarity |
 |-|-|-|-|-|-|-|
-| test_peanut | /Files/yangdong/wdl/SCP/Dataget/W202508040017201/01_dataget/peanut/peanut_merge.rds | peanut] | H1314,H2014 | biosample | leiden_res_0.50 | 32 |
+| test_peanut | /Files/yangdong/wdl/SCP/Dataget/W202508040017201/01_dataget/peanut/peanut_merge.rds | peanut] | H1314|H2014 | biosample | leiden_res_0.50 | 32 |
 
 ---
 # Output
@@ -83,10 +83,10 @@ Aurocs_matrix = MetaNeighborUS(var_genes = global_hvgs, 
 
 ---
 # Reference & Citation
-> [Article](https://drive.google.com/file/d/17fc8paCD7v6RA6GfwRVNcqle85cx52my/view?usp=drive_link)
-> [[R包] MetaNeighbor 第一期 评估不同数据集中细胞类型注释的一致性](https://mp.weixin.qq.com/s/cb9DWJm8zNc1J9wEUNTUVg)
-> [常被提起的Jaccard指数是什么？怎么在单细胞中运用和实现Jaccard相似性比较？](https://mp.weixin.qq.com/s/-6iM2phNUh2Qo0wbN0Azpw)
-> [练习R：hclust()函数层次聚类分析](https://mp.weixin.qq.com/s/-AvRPX7DG5fzyAVmv8wg7Q)
+- [Article](https://drive.google.com/file/d/17fc8paCD7v6RA6GfwRVNcqle85cx52my/view?usp=drive_link)
+- [[R包] MetaNeighbor 第一期 评估不同数据集中细胞类型注释的一致性](https://mp.weixin.qq.com/s/cb9DWJm8zNc1J9wEUNTUVg)
+- [常被提起的Jaccard指数是什么？怎么在单细胞中运用和实现Jaccard相似性比较？](https://mp.weixin.qq.com/s/-6iM2phNUh2Qo0wbN0Azpw)
+- [练习R：hclust()函数层次聚类分析](https://mp.weixin.qq.com/s/-AvRPX7DG5fzyAVmv8wg7Q)
 
 
 ---
