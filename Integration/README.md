@@ -113,6 +113,7 @@ tree /data/input/Files/yangdong/wdl/SCP/Integration/W202508120010920/03_integrat
 > [热点综述 | 跨模态单细胞分析的最佳实践](https://mp.weixin.qq.com/s/zBPxU37nPSXnrpeMmJz_og)
 > [单细胞整合用哪种方法好，北大张泽民院士的这篇Cancer Cell直接解决了咱们的困惑](https://mp.weixin.qq.com/s/DK91JN-hsYSZW0BaMeetxw)
 > [单细胞入门(三) | 在Seurat v5中使用sctransform normalization](https://mp.weixin.qq.com/s/12YufWzk_Ql90NlTOjyOcw)
+> [Nature Biotechnology || 2024 || CellANOVA：恢复单细胞数据批次整合中丢失的生物信号](https://mp.weixin.qq.com/s/DaOwkjVMuoxBAXq7CHhKFA)
 
 
 ---

@@ -3,6 +3,7 @@
 - **Fature** 优化输出可视化sankeyplot加颜色，heatmap.pdf的大小关联分群数量
 - **Log:**
   - v1.1.4
+    - 250905 sankey_order设置太麻烦了，修改为非必填项，无输入则可自动构建order; 修改pdf输出大小的判断，会根据亚群数目设置pdf宽度，环状热图经常报错已经取消，有需要可以在仓库的PLOT找到plot.ipynb作为个性化可视化
     - 250827 跟新Description
     - 250815(v1.1.4) 增添了`only_metaNeighbor`的判断默认只运行`metaNeighbor`，检查metaNeighbor运行的矩阵对象为`counts`，解决了可视化热图颜色块不显示的问题
 - **Tradition:** `cell_similarity` `jm`
@@ -12,7 +13,7 @@
 - **Variable**
   - `rds` 包含分组信息和cluster信息的rds对象，只跑metaNeighbor只需要rds包含`RNA@counts`,提取`counts`作为singlecellexperiment对象
   - `prefix` 每个`rds`运行之后输出文件的前缀，顺序对应
-  - `sankey_order` 将每个`rds`里面`batch_key`用','连接用于设定sankey plot的顺序
+  - `sankey_order` 将每个`rds`里面`batch_key`用'|'连接用于设定sankey plot的顺序
   - `batch_key` 分组信息键，默认每个`rds`文件的`batch_key`一致
   - `cluster_key` 分群信息键，默认每个`rds`文件的`cluster_key`一致
   - `mem_similarity` 运行similarity的资源(GB)
