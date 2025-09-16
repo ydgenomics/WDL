@@ -1,4 +1,4 @@
-### Date: 250814 scrublet_estimate.py
+### Date: 250916 scrublet_estimate.py
 ### Image: scrublet-py-- /opt/conda/bin/python
 ### Coder: ydgenomics
 ### Output: Marker_csv: gene, cluster, p_val_adj, avg_log2FC
@@ -238,14 +238,18 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     os.makedirs(output_dir)
     resolutions = ["leiden_res_0.20", "leiden_res_0.50", "leiden_res_0.80", "leiden_res_1.00", "leiden_res_1.30", "leiden_res_1.60", "leiden_res_2.00"]
     for res in resolutions:
-        sc.tl.rank_genes_groups(adata, groupby=res, method="wilcoxon")
-        sc.pl.rank_genes_groups_dotplot(adata, groupby=res, standard_scale="var", n_genes=5, save=f"{res}_marker.pdf")
-        marker = sc.get.rank_genes_groups_df(adata, group=None)
-        marker['gene'] = marker['names']
-        marker['cluster'] = marker['group']
-        marker['p_val_adj'] = marker['pvals_adj']
-        marker['avg_log2FC'] = marker['logfoldchanges']
-        marker.to_csv(f"{output_dir}/{res}.markers.csv", index=False)
+        if len(adata.obs[res].unique()) > 1:
+            print(f"Calculating markers for {res} with {len(adata.obs[res].unique())} clusters")
+            sc.tl.rank_genes_groups(adata, groupby=res, method="wilcoxon")
+            sc.pl.rank_genes_groups_dotplot(adata, groupby=res, standard_scale="var", n_genes=5, save=f"{res}_marker.pdf")
+            marker = sc.get.rank_genes_groups_df(adata, group=None)
+            marker['gene'] = marker['names']
+            marker['cluster'] = marker['group']
+            marker['p_val_adj'] = marker['pvals_adj']
+            marker['avg_log2FC'] = marker['logfoldchanges']
+            marker.to_csv(f"{output_dir}/{res}.markers.csv", index=False)
+        else:
+            print(f"Skipping {res} as it has only one cluster")
     # Summary
     with open('summary.txt', 'w') as f:
         f.write(species + ' data summary' + '\n')

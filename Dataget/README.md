@@ -3,6 +3,7 @@
 - **Fature:** 使用更新更适合数据的质控软件
 - **Log:**
   - 1.2.2
+    - 0916 如果scrublet分群在低分辨率下分群数小于等于0时不运行`rank_genes_groups`
     - 0827 更新Description
     - 0814 soupx后的数据会与两两不一样，增加添加splice和unsplice的元素不一样的判断(0814); doublet判断的图像缺失；缺少splice文件的问题；figure config的问题，已经注释掉(0814)
     - 1.2.2  250806 为`merge`增加了长度判断，对于无对照组即分组小于2的输入则不做merge
@@ -169,6 +170,7 @@ tree /data/input/Files/yangdong/wdl/SCP/Dataget/W202508040017201
   - 路线1：评估环境污染后去污，再去除双胞，质控后做降维聚类可视化；
   - 路线2：只做去除双胞（考虑到去污效果差异和过处理），质控后做降维聚类可视化；
 
+![qc](https://www.sc-best-practices.org/_images/quality_control.jpeg)
 - **Software:**
   - SoupX：是一个R包，去除背景 RNA 污染——SoupX 利用空液滴（empty droplets）中的游离 RNA 和聚类信息来对表达量进行矫正，从而达到去噪效果。一个液滴捕获的数据是细胞内源 mRNA UMI 总和 + 游离 mRNA 的 UMI 总和 [demo](https://cran.r-project.org/web/packages/SoupX/vignettes/pbmcTutorial.html) [SoupX tutorial](https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html)
   - scrublet 是一个用于单细胞 RNA 测序（scRNA-seq）数据中检测双细胞（doublets）的 Python 工具。双细胞是指在实验过程中，两个或多个细胞被错误地封装在同一个液滴中，导致测序结果中出现混合的转录组信号。scrublet 通过模拟双细胞并使用 k-最近邻分类器来计算每个细胞的双细胞得分（doublet score）[demo](https://github.com/swolock/scrublet/blob/master/examples)
@@ -206,15 +208,14 @@ conda install conda-forge::leidenalg -y
 
 ---
 # Reference & Citation
-> **Sincerely thank all teachers and researchers who provide open source resources**
-> 1. [SoupX——去除RNA污染](https://mp.weixin.qq.com/s/7g9Zo6IPqTafSjKCeAFNIQ)
-> 2. [使用DecontX预测和去除单细胞转录组的环境游离RNA污染](https://mp.weixin.qq.com/s/ndt9Fsgg5dNxIOh9m7j9Bw)
-> 3. [是否细胞周期矫正，去除双细胞和环境RNA污染——单细胞入门到进阶(初级篇2）](https://mp.weixin.qq.com/s/HgTVwfDfE4lzBXJKihlknA)
-> 4. [*生信钱同学*·全代码干货奉上——多样本多方案去除单细胞环境RNA污染——这次把这个聊清楚](https://mp.weixin.qq.com/s/1eJq3u-aKpQaL9CM7bV94g)
-> 4. [单细胞去噪工具一览](https://mp.weixin.qq.com/s/78RC4qH_Kw_eb-rql_QGjg)
-![scCDC对各个去污工具的评估](../png/scCDC_ability.png)
-> 5. [还在纠结双细胞质控方法吗！一文说清楚](https://mp.weixin.qq.com/s/64hB2cj-NwojuZbdiyEGzg)
-![doublecell](../png/doublecell_ability.png)
+**Sincerely thank all teachers and researchers who provide open source resources**
+- [quality-control of best practice](https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html#quality-control)
+- [SoupX——去除RNA污染](https://mp.weixin.qq.com/s/7g9Zo6IPqTafSjKCeAFNIQ)
+- [使用DecontX预测和去除单细胞转录组的环境游离RNA污染](https://mp.weixin.qq.com/s/ndt9Fsgg5dNxIOh9m7j9Bw)
+- [是否细胞周期矫正，去除双细胞和环境RNA污染——单细胞入门到进阶(初级篇2）](https://mp.weixin.qq.com/s/HgTVwfDfE4lzBXJKihlknA)
+- [*生信钱同学*·全代码干货奉上——多样本多方案去除单细胞环境RNA污染——这次把这个聊清楚](https://mp.weixin.qq.com/s/1eJq3u-aKpQaL9CM7bV94g)
+- [单细胞去噪工具一览](https://mp.weixin.qq.com/s/78RC4qH_Kw_eb-rql_QGjg)
+- [还在纠结双细胞质控方法吗！一文说清楚](https://mp.weixin.qq.com/s/64hB2cj-NwojuZbdiyEGzg)
 
 
 ---
