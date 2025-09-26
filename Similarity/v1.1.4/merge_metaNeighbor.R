@@ -71,8 +71,8 @@ print(merged_data$RNA@data[1:5,1:5])
 print(colnames(merged_data@meta.data))
 
 saveRDS(merged_data, paste0(output_name,"_merged.rds"))
-sdata <- merge_data
-rm(merge_data)
+sdata <- merged_data
+rm(merged_data)
 sdata
 colnames(sdata@meta.data)
 sdata <- as.SingleCellExperiment(sdata, assay = "RNA", slot = "counts")
