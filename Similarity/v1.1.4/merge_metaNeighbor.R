@@ -53,7 +53,7 @@ if (batch_key %in% colnames(merged_data@meta.data)) {
     print(paste0("Batch key ", batch_key, " not found. Added with value ", prefix, "."))
 }
 
-if (length(file_paths) > 1) {
+if (length(input_file) > 1) {
     for (i in 2:length(input_file)) {
         temp_data <- readRDS(input_file[[i]]); DefaultAssay(temp_data) <- "RNA"
         if (batch_key %in% colnames(temp_data@meta.data)) {
