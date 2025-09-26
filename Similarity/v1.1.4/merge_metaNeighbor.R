@@ -17,7 +17,7 @@ library(optparse)
 
 option_list <- list(
   make_option(c("-i", "--input_file"),
-    type = "character", default = "/data/input/Files/songyouran/resingle-8/dataget/W202509040023043/01_dataget/lettuce.leaf/lettuce.leaf.rds",
+    type = "character", default = "flie1.rds|file2.rds",
     help = "Path to input file"
   ),
   make_option(c("-o", "--output_name"),
@@ -38,14 +38,41 @@ option_list <- list(
   )
 )
 opt <- parse_args(OptionParser(option_list = option_list))
-input_file <- opt$input_file
+input_file <- unlist(strsplit(opt$input_file,  split = "|", fixed = TRUE))
 output_name <- opt$output_name
 batch_key <- opt$batch_key
 cluster_key <- opt$cluster_key
 threshold_value <- opt$threshold_value
 
+merged_data <- readRDS(input_file[[1]]); DefaultAssay(merged_data) <- "RNA"
+if (batch_key %in% colnames(merged_data@meta.data)) {
+    print(paste0("Batch key ", batch_key, " found in metadata."))
+} else {
+    prefix <- basename(input_file[[1]])
+    merged_data@meta.data[[batch_key]] <- prefix
+    print(paste0("Batch key ", batch_key, " not found. Added with value ", prefix, "."))
+}
 
-sdata <- readRDS(input_file)
+if (length(file_paths) > 1) {
+    for (i in 2:length(input_file)) {
+        temp_data <- readRDS(input_file[[i]]); DefaultAssay(temp_data) <- "RNA"
+        if (batch_key %in% colnames(temp_data@meta.data)) {
+            print(paste0("Batch key ", batch_key, " found in metadata."))
+        } else {
+            prefix <- basename(input_file[[i]])
+            temp_data@meta.data[[batch_key]] <- prefix
+            print(paste0("Batch key ", batch_key, " not found. Added with value ", prefix, "."))
+        }
+        merged_data <- merge(merged_data, temp_data)
+    }
+}
+print(merged_data$RNA@counts[1:5,1:5])
+print(merged_data$RNA@data[1:5,1:5])
+print(colnames(merged_data@meta.data))
+
+saveRDS(merged_data, paste0(output_name,"_merged.rds"))
+sdata <- merge_data
+rm(merge_data)
 sdata
 colnames(sdata@meta.data)
 sdata <- as.SingleCellExperiment(sdata, assay = "RNA", slot = "counts")

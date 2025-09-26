@@ -3,6 +3,7 @@
 - **Fature** 优化输出可视化sankeyplot加颜色
 - **Log:**
   - v1.1.4
+    - 0926 满足输入多个rds跑metaNeighbor的场景，即添加一个判断输入的rds数量，多个则先merge再运行。如果原来batch_key存在于多个rds中则直接使用，如果不存在则取输入文件名后缀为新建该列的值
     - 250905 sankey_order设置太麻烦了，修改为非必填项，无输入则可自动构建order; 修改pdf输出大小的判断，会根据亚群数目设置pdf宽度，环状热图经常报错已经取消，有需要可以在仓库的PLOT找到plot.ipynb作为个性化可视化
     - 250827 跟新Description
     - 250815(v1.1.4) 增添了`only_metaNeighbor`的判断默认只运行`metaNeighbor`，检查metaNeighbor运行的矩阵对象为`counts`，解决了可视化热图颜色块不显示的问题
