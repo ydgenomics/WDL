@@ -1,5 +1,7 @@
 # Cluster
 
+# Detail
+
 # Reference & Citation
 > [Nature Genetics｜解决你单细胞不知道聚多少类的问题——可以说这应该是近期最好的一篇内容了](https://mp.weixin.qq.com/s/Zgy0F5-vGNRACDmWt7Wz4A)
 > [Nature Genetics || 利用高级统计方法（潜在嵌入多元回归）解析多条件下的单细胞组学数据](https://mp.weixin.qq.com/s/SdZwKTPFDbpY-QUxbBwc8w) 一种不依赖于分群的分析框架
