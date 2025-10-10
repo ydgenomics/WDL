@@ -1,4 +1,4 @@
-### Date: 250930 run_scrublet.py
+### Date: 251010 run_scrublet.py
 ### Image: scrublet-py-- /opt/conda/bin/python
 ### Output: Marker_csv: gene, cluster, p_val_adj, avg_log2FC
 
@@ -32,6 +32,7 @@ parser.add_argument('--mitogenes_csv', type=str, default="None_mito_genes.csv", 
 parser.add_argument('--mito_threshold', type=float, default=5, help='Mitochondrial gene threshold')
 parser.add_argument('--n_hvg', type=int, default=3000, help='Number of highly variable genes')
 parser.add_argument('--rlst', type=str, default="0.2,0.5,0.8,1.0", help='Comma-separated list of resolutions for clustering')
+parser.add_argument('--doublet_threshold', type=float, default=0.2, help='Threshold for doublet score to filter cells')
 
 args = parser.parse_args()
 biosample_value = args.biosample_value
@@ -46,6 +47,7 @@ mitogenes_csv = args.mitogenes_csv
 mito_threshold = args.mito_threshold
 n_hvg = args.n_hvg
 rlst = args.rlst
+doublet_threshold = args.doublet_threshold
 
 # --- Check mito_genes ---
 suffix = os.path.splitext(mitogenes_csv)[1].lower()
@@ -132,7 +134,7 @@ def complete_cells(adata, all_cells):
         print("No need to complete, all cells are present in adata.")
     return adata
 
-def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mitogenes_csv, mito_threshold, n_hvg, rlst):
+def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mitogenes_csv, mito_threshold, n_hvg, rlst, doublet_threshold):
     """
     Concatenate, QC, filter, and plot AnnData objects for all samples.
     """
@@ -211,6 +213,9 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     sc.pp.filter_genes(adata, min_cells=input_mincells)
     sc.external.pp.scrublet(adata, batch_key=group_key)
     adata = adata[adata.obs['predicted_doublet'] == False] # Only keep as False 
+    if doublet_threshold < 1:
+        print(f"Filtering cells with doublet score >= {doublet_threshold}")
+        adata = adata[adata.obs['doublet_score'] < doublet_threshold] # Only keep low score
 
     adata.layers["counts"] = adata.X.copy()
 
@@ -253,6 +258,9 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
             print(f"Calculating markers for {res} with {len(adata.obs[res].unique())} clusters")
             sc.tl.rank_genes_groups(adata, groupby=res, method="wilcoxon")
             sc.pl.rank_genes_groups_dotplot(adata, groupby=res, standard_scale="var", n_genes=5, save=f"{res}_marker.pdf")
+            # sc.pl.tracksplot(adata, marker_genes_dict, groupby=res, dendrogram=True, save=f"_{res}_tracksplot.pdf")
+            # sc.tl.dendrogram(adata, groupby=res)
+            # sc.pl.dendrogram(adata, groupby=res, save=f"_{res}_dendrogram.pdf")
             marker = sc.get.rank_genes_groups_df(adata, group=None)
             marker['gene'] = marker['names']
             marker['cluster'] = marker['group']
@@ -278,7 +286,7 @@ def run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_n
     adata.write_h5ad(filename=species + '.h5ad', compression="gzip")
 
 # Main function to run the scrublet analysis
-def run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, input_mingenes, input_mincells, group_key, mitogenes_csv, mito_threshold, n_hvg, rlst):
+def run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, input_mingenes, input_mincells, group_key, mitogenes_csv, mito_threshold, n_hvg, rlst, doublet_threshold):
     """
     Main function to run Scrublet and process multi-matrix AnnData.
     """
@@ -338,11 +346,16 @@ def run_scrublet(species, sample_txt, matrix_txt, splice_txt, unsplice_txt, inpu
         print("trans_splice_list:",  trans_splice_list)
         print("trans_unsplice_list:", trans_unsplice_list)
         print("sample_names:",        sample_names)
-        run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mitogenes_csv, mito_threshold, n_hvg, rlst)
+        run_concat_plot(species, input_mingenes, input_mincells, group_key, sample_names, trans_matrix_list, trans_splice_list, trans_unsplice_list, mitogenes_csv, mito_threshold, n_hvg, rlst, doublet_threshold)
     else:
         print("No samples to process")
         with open('summary.txt', 'w') as f:
             f.write(species + ' data summary' + '\n')
             f.write('No samples to process' + '\n')
+    # delete temp folders
+    import shutil
+    for d in sample_names:
+        if os.path.isdir(d):          # 先判断存在且是目录
+            shutil.rmtree(d)          # 递归删除整个目录
 
-run_scrublet(biosample_value, sample_list, filter_list, splice_list, unsplice_list, input_mingenes, input_mincells, group_key, mitogenes_csv, mito_threshold, n_hvg, rlst)
+run_scrublet(biosample_value, sample_list, filter_list, splice_list, unsplice_list, input_mingenes, input_mincells, group_key, mitogenes_csv, mito_threshold, n_hvg, rlst, doublet_threshold)

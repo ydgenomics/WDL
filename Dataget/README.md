@@ -3,12 +3,16 @@
 - **Fature:** 使用更新更适合数据的质控软件
 - **Log:**
   - 1.2.3 250929
-    1. Array[Array[File]]输入调整为Array[File]，要求biosample_value数量要与sample一致，shell命令通过unique值进行分组
-    2. 对于多个文件输入不再用.txt的方法，直接用`'~{sep="," variable}'`来实现多个对象的输入
-    3. 减少输入变量，对于缺少或后续不需要RNAvelocity分析的项目可不添加对应的layers，节约内存资源(提前到矩阵读取前面)
-    4. 是否添加双胞分数来过滤，默认按predict判断为TRUE进行过滤
-    5. 取消生成SoupX的污染评估pdf文件
-    6. 01_Dataget, 02_Seurat, 03_CHOIR, 04_Similarity, output(Seurat+scanpy)
+    1. 提供了更多的软件方案
+      - Correction of ambient RNA: SoupX(R), scCDC(R)
+      - Doublet Detection: scrublet(python), scDblFinder(R)
+    2. 新加CHOIR作为最优分群(02_CHOIR)，并用Metaneighbor找到biosample的批次下各个cluster的相似性(03_Similarity)，并输出统一meta.data和obs信息的rds和h5ad文件(OUTPUT)
+    3. scrublet添加可选双胞分数来过滤，默认按predict判断为TRUE进行过滤，如果输入doublet_threshold将按最大分数过滤
+    4. SoupX取消生成污染评估pdf文件，并将污染值整合到最后的summary.txt中
+    5. Array[Array[File]]输入调整为Array[File]，要求biosample_value数量要与sample一致，shell命令通过unique值进行分组
+    6. 对于多个文件输入不再用.txt的方法，直接用`'~{sep="," variable}'`来实现多个对象的输入
+    7. 减少输入变量，对于缺少或后续不需要RNAvelocity分析的项目可不添加对应的layers，节约内存资源(提前到矩阵读取前面)
+    8. 01_Dataget, 02_Seurat, 03_CHOIR, 04_Similarity, output(Seurat+scanpy)
 - **Tradition:** dataget_scRNAseq
 
 
@@ -179,10 +183,20 @@ tree /data/input/Files/yangdong/wdl/SCP/Dataget/W202508040017201
   - scrublet-py--05, scrublet-py--04
   - sceasy-schard-10, sceasy-schard--02
 
+
 ```shell
-conda create -n r r-base=4.4 -y
+source /opt/software/miniconda3/bin/activate
+conda create -n r r-base=4.3 -y
 conda activate r
+conda install conda-forge::r-devtools -y
 conda install conda-forge::r-seurat -y
+conda install conda-forge::r-ddpcr -y
+conda install conda-forge::r-proc -y
+# conda install git -y
+# conda install -c conda-forge gcc_linux-64=10 gxx_linux-64=10 gfortran_linux-64=10
+conda install -c conda-forge gcc_linux-64=10 gxx_linux-64=10 gfortran_linux-64=10
+Rscript -e 'devtools::install_github("ZJU-UoE-CCW-LAB/scCDC")'
+
 conda install conda-forge::r-soupx -y
 conda install bioconda::bioconductor-decontx -y
 conda install bioconda::presto -y
@@ -190,13 +204,30 @@ conda install bioconda::bioconductor-dropletutils -y
 conda install conda-forge::r-optparse -y
 conda install bioconda::r-sceasy -y
 conda install conda-forge::r-reticulate -y
-conda install conda-forge::r-devtools -y
+conda install conda-forge::r-irkernel -y
+conda install bioconda::bioconductor-scdblfinder -y
 # devtools::install_github("cellgeni/schard")
 conda create -n py python=3.12 -y
 conda activate py
 conda install conda-forge::scanpy -y
 conda install bioconda::scrublet -y
 conda install conda-forge::leidenalg -y
+```
+
+```R
+install.packages("devtools")
+install.packages('remotes')
+library(devtools)
+# install.packages('Seurat') # don't apply for R 4.1
+remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE)
+install_github("ZJU-UoE-CCW-LAB/scCDC")
+
+```
+
+[https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html](https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html)
+```shell
+
+
 ```
 
 

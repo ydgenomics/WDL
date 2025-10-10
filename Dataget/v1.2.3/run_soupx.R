@@ -1,4 +1,4 @@
-### Date: 250930 run_soupx.R
+### Date: 251010 run_soupx.R
 ### Image: SoupX-R--03 /opt/conda/bin/R
 ### Coder: ydgenomics
 ### Reference: https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html
@@ -61,13 +61,12 @@ run_soupx <- function(raw_path, filter_path, sample_name, input_mingenes, tfidfM
     # dev.off()
 
     rho_value <- unique(sc$metaData$rho)
-    rho_adjust <- ifelse(rho_value < highestrho, 'good', 'not good')
+    rho_adjust <- ifelse(rho_value < highestrho, 'good(Less than 0.2)', 'not good(Greater than 0.2)')
 
     out <- adjustCounts(sc)
     DropletUtils::write10xCounts(sample_name, out, version="3")
     file_conn <- file(paste0(sample_name,'_soupx_rho.txt'), open = "w")
-    cat("highestrho:", highestrho, "\n", file = file_conn)
-    cat("sample:", sample_name, "\n", file = file_conn)
+    cat("\nsample:", sample_name, "\n", file = file_conn)
     cat("rho:", rho_value, "\n", file = file_conn) 
     cat("how:", rho_adjust, "\n", file = file_conn)
     close(file_conn)
