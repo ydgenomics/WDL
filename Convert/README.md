@@ -3,6 +3,7 @@
 - **Fature** 
 - **Log:** 
   - v1.0.1
+    - 251011 规避`CreateAssayObject`修改基因名'_'为'-'的问题
     - 250827 完善Description
     - 250819 第一次提交
 

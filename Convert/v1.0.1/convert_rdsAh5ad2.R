@@ -1,4 +1,4 @@
-### Date: 250819 convert_rdsAh5ad2.R
+### Date: 251011 convert_rdsAh5ad2.R
 ### Description: Focusing on converting object of multiple layers.
 ### Image: sceasy-schard /software/conda/Anaconda/bin/R
 ### Reference: Â© EMBL-European Bioinformatics Institute, 2023 Yuyao Song <ysong@ebi.ac.uk>
@@ -119,7 +119,9 @@ if (ext == "rds") {
             seu2 <- readRDS(rds_paths[i])
             saved_layer <- saved_layers[i]
             rna_data <- GetAssayData(seu2, assay = "RNA", layer = "counts")
+            gene_names <- rownames(rna_data); head(gene_names)
             other_assay <- CreateAssayObject(counts = rna_data, meta.data = seu2@meta.data, name = saved_layer)
+            rownames(other_assay) <- gene_names; head(rownames(other_assay))
             seu[[saved_layer]] <- other_assay
             cat(sprintf("Layer: %s, Added to Seurat object\n", saved_layer))
         }   
