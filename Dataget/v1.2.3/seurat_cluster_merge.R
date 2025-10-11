@@ -88,20 +88,9 @@ if (length(file_paths) > 1) {
         temp_data <- seurat_pipeline(temp_data, r_value, plot_keys, prefix=basename(file_paths[[i]]))
         merged_data <- merge(merged_data, temp_data)
     }
+    merged_data@meta.data[[paste0("RNA_snn_res.",as.character(r_value),"_0")]] <- merged_data@meta.data[[paste0("RNA_snn_res.",as.character(r_value))]]
+    plot_keys <- c(plot_keys, paste0("RNA_snn_res.",as.character(r_value),"_0"))
+    merged_data <- seurat_pipeline(merged_data, r_value, plot_keys, prefix=name)
 }
-
-merged_data <- NormalizeData(merged_data)
-merged_data <- FindVariableFeatures(merged_data, nfeatures = 3000)
-merged_data <- ScaleData(merged_data)
-merged_data <- RunPCA(merged_data, features = VariableFeatures(object = seu), verbose = FALSE)
-merged_data <- FindNeighbors(merged_data, reduction = "pca", dims = 1:30)
-# merged_data <- FindClusters(merged_data, resolution = as.numeric(r_value)) # RNA_snn_res.0.5
-merged_data <- RunUMAP(merged_data, dims = 1:20, verbose = FALSE)
-pdf(paste0(name, "_umap.pdf"), width = 10, height = 8)
-for (plot_key in plot_keys){
-    p1 <- DimPlot(seu, reduction = "umap", group.by = plot_key, shuffle = TRUE, label = TRUE)
-    print(p1)
-}
-dev.off()
-
-saveRDS(merged_data, paste0(name,".rds"))
+print(merged_data$RNA@counts[1:5,1:5])
+print(colnames(merged_data@meta.data))
