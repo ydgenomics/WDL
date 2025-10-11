@@ -13,12 +13,6 @@ option_list <- list(
   make_option(c("-f", "--file_paths"),
               type = "character", default = "/data/input/Files/P-Ref/Gossypium_hirsutum/SC/01_dataget/Gh/CCRI12.hr.rds|/data/input/Files/P-Ref/Gossypium_hirsutum/SC/01_dataget/Gh/CCRI12gl.hr.rds",
               help = "Comma-separated RDS file paths"),
-  make_option(c("-k", "--cluster_key"),
-              type = "character", default = "leiden_res_0.50|leiden_res_0.50",
-              help = "Meta.data column name for subsetting [default %default]"),
-  make_option(c("-v", "--cluster_value"),
-              type = "character", default = "all|all",
-              help = "Comma-separated cluster values to keep [default %default]"),
   make_option(c("-p", "--plot_keys"),
               type = "character", default = "biosample|sample|leiden_res_0.50",
               help = "Comma-separated keys for UMAP plotting [default %default]"),
@@ -36,8 +30,6 @@ opt <- parse_args(opt_parser)
 
 ## 3. 取出并拆分 --------------------------------------------------------
 file_paths  <- unlist(strsplit(opt$file_paths,  split = "|", fixed = TRUE))
-cluster_key <- unlist(strsplit(opt$cluster_key,    split = "|", fixed = TRUE))
-cluster_value <- unlist(strsplit(opt$cluster_value, split = "|", fixed = TRUE))
 plot_keys   <- unlist(strsplit(opt$plot_keys,   split = "|", fixed = TRUE))
 r_value     <- opt$r_value
 name        <- opt$name
@@ -45,8 +37,6 @@ name        <- opt$name
 
 
 print(file_paths)
-print(cluster_key)
-print(cluster_value)
 plot_keys <- c(plot_keys,paste0("RNA_snn_res.",as.character(r_value)))
 plot_keys <- c(plot_keys,'CHOIR_clusters_0.05')
 print(plot_keys)
@@ -90,19 +80,11 @@ seurat_pipeline <- function(seu, r_value, plot_keys, prefix){
 }
 
 merged_data <- readRDS(file_paths[[1]]); DefaultAssay(merged_data) <- "RNA"
-if (!unlist(strsplit(cluster_value[[1]], split = ","))[1] == "all"){
-    print(paste0("Dealing: ", cluster_key[[1]], " & ", cluster_value[[1]]))
-    merged_data <- subset(merged_data, subset = !!sym(cluster_key[[1]]) == unlist(strsplit(cluster_value[[1]], split = ",")))
-}
 merged_data <- seurat_pipeline(merged_data, r_value, plot_keys, prefix=basename(file_paths[[1]]))
 
 if (length(file_paths) > 1) {
     for (i in 2:length(file_paths)) {
         temp_data <- readRDS(file_paths[[i]]); DefaultAssay(temp_data) <- "RNA"
-        if (!unlist(strsplit(cluster_value[[i]], split = ","))[1] == "all"){
-            print(paste0("Dealing: ", file_paths[[i]]))
-            temp_data <- subset(temp_data, subset = !!sym(cluster_key[[i]]) == unlist(strsplit(cluster_value[[i]], split = ",")))
-        }
         temp_data <- seurat_pipeline(temp_data, r_value, plot_keys, prefix=basename(file_paths[[i]]))
         merged_data <- merge(merged_data, temp_data)
     }
