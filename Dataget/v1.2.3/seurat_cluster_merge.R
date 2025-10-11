@@ -1,8 +1,5 @@
-# /home/stereonote/miniconda3/envs/r_env/bin/R
-
-### Date: 250818
-### 集取子集，整合，标准化，降维聚类为一体的Rscript
-### 应用场景：1.多个数据的整合；2.多个数据的取子集；3.多个数据取子集之后再整合
+### Date: 251011
+### /home/stereonote/miniconda3/envs/r_env/bin/R
 
 library(Seurat)
 library(dplyr)
@@ -12,26 +9,24 @@ library(clustree)
 
 
 library(optparse)
-
-## 1. 定义选项及默认值 -------------------------------------------------
 option_list <- list(
   make_option(c("-f", "--file_paths"),
-              type = "character", default = "/data/work/cotton/output/subset/cotton_K2.hr.rds.rds|/data/work/cotton/output/subset/cotton_C1.hr.rds.rds|/data/work/cotton/output/subset/cotton_D3.hr.rds.rds|/data/work/cotton/output/subset/cotton_G3.hr.rds.rds|/data/work/cotton/output/subset/cotton_E1.hr.rds.rds",
+              type = "character", default = "/data/input/Files/P-Ref/Gossypium_hirsutum/SC/01_dataget/Gh/CCRI12.hr.rds|/data/input/Files/P-Ref/Gossypium_hirsutum/SC/01_dataget/Gh/CCRI12gl.hr.rds",
               help = "Comma-separated RDS file paths"),
   make_option(c("-k", "--cluster_key"),
-              type = "character", default = "leiden_res_0.50|leiden_res_0.50|leiden_res_0.50|leiden_res_0.50|leiden_res_0.50",
+              type = "character", default = "leiden_res_0.50|leiden_res_0.50",
               help = "Meta.data column name for subsetting [default %default]"),
   make_option(c("-v", "--cluster_value"),
-              type = "character", default = "5|5|3|5|2",
+              type = "character", default = "all|all",
               help = "Comma-separated cluster values to keep [default %default]"),
   make_option(c("-p", "--plot_keys"),
-              type = "character", default = "sample|leiden_res_0.50",
+              type = "character", default = "biosample|sample|leiden_res_0.50",
               help = "Comma-separated keys for UMAP plotting [default %default]"),
   make_option(c("-r", "--r_value"),
-              type = "numeric", default = 0.2,
+              type = "numeric", default = 0.5,
               help = "Clustering resolution [default %default]"),
   make_option(c("-n", "--name"),
-              type = "character", default = "cotton_fibre",
+              type = "character", default = "Gh",
               help = "Prefix for output files [default %default]")
 )
 
@@ -53,11 +48,12 @@ print(file_paths)
 print(cluster_key)
 print(cluster_value)
 plot_keys <- c(plot_keys,paste0("RNA_snn_res.",as.character(r_value)))
+plot_keys <- c(plot_keys,'CHOIR_clusters_0.05')
 print(plot_keys)
 print(r_value)
 print(name)
 
-plot_keys <- c(plot_keys,CHOIR_clusters_0.05)
+
 seurat_pipeline <- function(seu, r_value, plot_keys, prefix){
     seu <- NormalizeData(seu)
     seu <- FindVariableFeatures(seu, nfeatures = 3000)
@@ -66,6 +62,7 @@ seurat_pipeline <- function(seu, r_value, plot_keys, prefix){
     seu <- FindNeighbors(seu, reduction = "pca", dims = 1:30)
     seu <- FindClusters(seu, resolution = as.numeric(r_value)) # RNA_snn_res.0.5
     seu <- RunUMAP(seu, dims = 1:20, verbose = FALSE)
+    print("--- CHOIR ---")
     seu <- seu |>
       buildTree() |>
       pruneTree()
@@ -78,10 +75,10 @@ seurat_pipeline <- function(seu, r_value, plot_keys, prefix){
     #           plot_nearest = FALSE)
     # dev.off()
     # result <- getRecords(object, key = "CHOIR")
-    seu$leiden_res_choir <- seu$CHOIR_clusters_0.05
-    seu@meta.data[[paste0("leiden_res_r",as.character(r_value))]] <- seu@meta.data[[paste0("RNA_snn_res.",as.character(r_value))]]
-    clustree(object@meta.data, prefix="leiden_res_")
-    
+    # seu$leiden_res_choir <- seu$CHOIR_clusters_0.05
+    # seu@meta.data[[paste0("leiden_res_r",as.character(r_value))]] <- seu@meta.data[[paste0("RNA_snn_res.",as.character(r_value))]]
+    # clustree(object@meta.data, prefix="leiden_res_")
+    prefix <- sub("\\.rds$", "", basename(prefix))
     pdf(paste0(prefix, "_umap.pdf"), width = 10, height = 8)
     for (plot_key in plot_keys){
         p1 <- DimPlot(seu, reduction = "umap", group.by = plot_key, shuffle = TRUE, label = TRUE)
@@ -118,9 +115,11 @@ merged_data <- RunPCA(merged_data, features = VariableFeatures(object = seu), ve
 merged_data <- FindNeighbors(merged_data, reduction = "pca", dims = 1:30)
 # merged_data <- FindClusters(merged_data, resolution = as.numeric(r_value)) # RNA_snn_res.0.5
 merged_data <- RunUMAP(merged_data, dims = 1:20, verbose = FALSE)
-pdf(paste0(prefix, "_umap.pdf"), width = 10, height = 8)
+pdf(paste0(name, "_umap.pdf"), width = 10, height = 8)
 for (plot_key in plot_keys){
     p1 <- DimPlot(seu, reduction = "umap", group.by = plot_key, shuffle = TRUE, label = TRUE)
     print(p1)
 }
 dev.off()
+
+saveRDS(merged_data, paste0(name,".rds"))
