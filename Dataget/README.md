@@ -192,9 +192,9 @@ conda install conda-forge::r-devtools -y
 conda install conda-forge::r-seurat -y
 conda install conda-forge::r-ddpcr -y
 conda install conda-forge::r-proc -y
-# conda install git -y
-# conda install -c conda-forge gcc_linux-64=10 gxx_linux-64=10 gfortran_linux-64=10
-conda install -c conda-forge gcc_linux-64=10 gxx_linux-64=10 gfortran_linux-64=10
+conda install git -y
+conda install -c conda-forge gcc_linux-64=10 gxx_linux-64=10 gfortran_linux-64=10 -y
+
 Rscript -e 'devtools::install_github("ZJU-UoE-CCW-LAB/scCDC")'
 
 conda install conda-forge::r-soupx -y

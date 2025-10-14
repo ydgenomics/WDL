@@ -3,6 +3,7 @@
 - **Fature**
 - **Log:** 
   - v1.0.0
+    - 251014 新增`type`区分输入的是nucleotide还是protein，使用blastn做核酸序列比对
     - 250828 提交Description
 
 ---
