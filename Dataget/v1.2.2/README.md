@@ -2,17 +2,26 @@
 - **Brief:** SoupX去除环境污染，scrublet评估双胞并去除预测为双胞的细胞，质控后用scanpy做标准化、降维、聚类、Marker和可视化
 - **Fature:** 使用更新更适合数据的质控软件
 - **Log:**
-  - 1.2.3 250929
-    1. 提供了更多的软件方案
-      - Correction of ambient RNA: SoupX(R), scCDC(R)
-      - Doublet Detection: scrublet(python), scDblFinder(R)
-    2. 新加CHOIR作为最优分群(02_CHOIR)，并用Metaneighbor找到biosample的批次下各个cluster的相似性(03_Similarity)，并输出统一meta.data和obs信息的rds和h5ad文件(OUTPUT)
-    3. scrublet添加可选双胞分数来过滤，默认按predict判断为TRUE进行过滤，如果输入doublet_threshold将按最大分数过滤
-    4. SoupX取消生成污染评估pdf文件，并将污染值整合到最后的summary.txt中
-    5. Array[Array[File]]输入调整为Array[File]，要求biosample_value数量要与sample一致，shell命令通过unique值进行分组
-    6. 对于多个文件输入不再用.txt的方法，直接用`'~{sep="," variable}'`来实现多个对象的输入
-    7. 减少输入变量，对于缺少或后续不需要RNAvelocity分析的项目可不添加对应的layers，节约内存资源(提前到矩阵读取前面)
-    8. 01_Dataget, 02_Seurat, 03_CHOIR, 04_Similarity, output(Seurat+scanpy)
+  - 1.2.2
+    - 0827 更新Description
+    - 0814 soupx后的数据会与两两不一样，增加添加splice和unsplice的元素不一样的判断(0814); doublet判断的图像缺失；缺少splice文件的问题；figure config的问题，已经注释掉(0814)
+    - 1.2.2  250806 为`merge`增加了长度判断，对于无对照组即分组小于2的输入则不做merge
+    - 250805
+      - scrublet的结果存储在`.obs['predicted_doublet']` & `.obs['doublet_score']`去除`predicted_doublet`中为`True`的细胞，可视化中若`predicted_doublet`的umap为空则说明全是`False`，scanpy可视化umap至少两个及其以上变量数目。
+      - 当缺少splice和unsplice矩阵或后续分析不涉及RNA Velocity时，可以不输入`SpliceMatrix`和`UnspliceMatrix`，为保证流程运行会将`FilterMatrix`/`SoupX结果`同时作为`SpliceMatrix`和`UnspliceMatrix`的输入。
+      - `.X`里面是标准化后的矩阵，如果转rds应该先`adata.X=adata.layers['counts'].copy()`保证`.X`为原始数据。
+      - 最新的脚本代码仓库[Dataget/v1.2.2](https://github.com/ydgenomics/WDL/tree/main/Dataget/v1.2.2)
+  - 1.2.1
+    - 修改为Dataget流程，支持多分组数据一次投递，新增子任务`merge`做.h5ad转.rds并merge做Seurat的标准化，该对象可用于后面做**Similarity**分析
+  - 1.2.0
+    - 0606 修改因`CreateSeuratObject()`自动更改基因名中'_'为'-'的问题，将task封装为函数即`run_*`；另外在流程部署上取消了脚本封装，避免多次保存环境和公布流程引起的维护问题，样本间concat也是取并集，尽量保存多的特征信息；另外在三个矩阵合并时基因取并集，至于细胞感觉也取并集，保留更多信息。
+    - 20250516 统一了输出的marker基因csv包含的列`gene,cluster,p_val_adj,avg_log2FC`，便于下游分析；另外对多个resolution的marker基因的pdf和csv进行了保存`0.5, 0.8, 1.0`
+    - 20250507 修改了三个矩阵存在细胞数不同的情况(Soupx处理后的矩阵)--取交集，修改了可视化pct_counts_mt的判断
+    - 20250429 修改了三个矩阵整合为取基因的交集，另外为scrublet_estimate_doublecell.py运行添加了` > log.txt 2>&1`，用于保存运行过程信息
+    - 20250417 优化了三个矩阵得到一个对象的基因选择，都以FilterMatrix为基准
+    - 20250414 1.引入了splice和unsplice矩阵到anndata对象的layers中，有利于后面的RNA velocity分析; 2.将sample名作为后缀加到细胞名后面，保证了每个样本的细胞名不重复; 3.根据SoupX的默认参数maxrho为0.2，根据样本实际情况调整; 4.放弃了原先的大目录检索，之前的不利于流程维护，更加推荐大家使用表格投递任务
+  - 1.0.0
+    - 20250305 修复了无线粒体基因和有线粒体基因数据在QC质控的判断
 - **Tradition:** dataget_scRNAseq
 
 
@@ -33,7 +42,7 @@
   - `mito_threshold` Int 线粒体基因最高占比，默认为5
 
 
-- **csv** [download](https://github.com/ydgenomics/WDL/blob/main/Dataget/v1.2.3/Dataget_v1.2.3.csv) 
+- **csv** [download](https://github.com/ydgenomics/WDL/blob/main/Dataget/v1.2.2/Dataget_v1.2.2.csv) 
 - **Example** 
 
 | EntityID | RawMatrix1 | RawMatrix2 | FilterMatrix1 | FilterMatrix2 | SpliceMatrix1 | SpliceMatrix2 | UnspliceMatrix1 | UnspliceMatrix2 | sample_value1 | sample_value2 | biosample_value | species |
@@ -160,18 +169,9 @@ tree /data/input/Files/yangdong/wdl/SCP/Dataget/W202508040017201
   - 路线1：评估环境污染后去污，再去除双胞，质控后做降维聚类可视化；
   - 路线2：只做去除双胞（考虑到去污效果差异和过处理），质控后做降维聚类可视化；
 
-![qc](https://www.sc-best-practices.org/_images/quality_control.jpeg)
 - **Software:**
   - SoupX：是一个R包，去除背景 RNA 污染——SoupX 利用空液滴（empty droplets）中的游离 RNA 和聚类信息来对表达量进行矫正，从而达到去噪效果。一个液滴捕获的数据是细胞内源 mRNA UMI 总和 + 游离 mRNA 的 UMI 总和 [demo](https://cran.r-project.org/web/packages/SoupX/vignettes/pbmcTutorial.html) [SoupX tutorial](https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html)
-    - `autoEstCont()`是评估数据的污染层度，`tfidfMin`(Minimum value of tfidf to accept for a marker gene, Default is 1) [html](https://rdrr.io/cran/SoupX/man/autoEstCont.html)
-    - `input_mingenes` 默认去除不满足大于100个基因都有表达的细胞
-    - 评估污染值(rho)大于0.2的为"not good"
-  - [scCDC](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-024-03284-w)：2024年发表于Genome Biology的去污软件，可以检测导致污染的基因(GCGs),并只校正这些基因的表达水平,避免了对其他基因的过度校正
-    - 
-  - [scDblFinder](https://www.cell.com/cell-systems/fulltext/S2405-4712(20)30459-2?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471220304592%3Fshowall%3Dtrue)发表于2021的R算法在其去双胞基准测试中表现最优，并在[https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html#doublet-detection]作为最优方法
   - scrublet 是一个用于单细胞 RNA 测序（scRNA-seq）数据中检测双细胞（doublets）的 Python 工具。双细胞是指在实验过程中，两个或多个细胞被错误地封装在同一个液滴中，导致测序结果中出现混合的转录组信号。scrublet 通过模拟双细胞并使用 k-最近邻分类器来计算每个细胞的双细胞得分（doublet score）[demo](https://github.com/swolock/scrublet/blob/master/examples)
-    - `input_mingenes` 默认去除不满足大于100个基因都有表达的细胞
-    - `input_mincells` 默认去除不满足大于3个细胞都有表达的基因
 
 - **Script:**
   - scrublet_estimate.py
@@ -183,20 +183,10 @@ tree /data/input/Files/yangdong/wdl/SCP/Dataget/W202508040017201
   - scrublet-py--05, scrublet-py--04
   - sceasy-schard-10, sceasy-schard--02
 
-
 ```shell
-source /opt/software/miniconda3/bin/activate
-conda create -n r r-base=4.3 -y
+conda create -n r r-base=4.4 -y
 conda activate r
-conda install conda-forge::r-devtools -y
 conda install conda-forge::r-seurat -y
-conda install conda-forge::r-ddpcr -y
-conda install conda-forge::r-proc -y
-conda install git -y
-conda install -c conda-forge gcc_linux-64=10 gxx_linux-64=10 gfortran_linux-64=10 -y
-
-Rscript -e 'devtools::install_github("ZJU-UoE-CCW-LAB/scCDC")'
-
 conda install conda-forge::r-soupx -y
 conda install bioconda::bioconductor-decontx -y
 conda install bioconda::presto -y
@@ -204,8 +194,7 @@ conda install bioconda::bioconductor-dropletutils -y
 conda install conda-forge::r-optparse -y
 conda install bioconda::r-sceasy -y
 conda install conda-forge::r-reticulate -y
-conda install conda-forge::r-irkernel -y
-conda install bioconda::bioconductor-scdblfinder -y
+conda install conda-forge::r-devtools -y
 # devtools::install_github("cellgeni/schard")
 conda create -n py python=3.12 -y
 conda activate py
@@ -214,62 +203,23 @@ conda install bioconda::scrublet -y
 conda install conda-forge::leidenalg -y
 ```
 
-```R
-install.packages("devtools")
-install.packages('remotes')
-library(devtools)
-# install.packages('Seurat') # don't apply for R 4.1
-remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE)
-install_github("ZJU-UoE-CCW-LAB/scCDC")
-
-```
-
-[https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html](https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html)
-```shell
-
-
-```
-
 
 ---
 # Reference & Citation
-**Sincerely thank all teachers and researchers who provide open source resources**
-- [quality-control of best practice](https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html#quality-control)
-- [*生信钱同学*·全代码干货奉上——多样本多方案去除单细胞环境RNA污染——这次把这个聊清楚](https://mp.weixin.qq.com/s/1eJq3u-aKpQaL9CM7bV94g)
-- [单细胞去噪工具一览](https://mp.weixin.qq.com/s/78RC4qH_Kw_eb-rql_QGjg)
-- [单细胞CellBender去除环境RNA污染学习(Python)](https://mp.weixin.qq.com/s/PZqwA1y2240JHkgw4D-UDQ)
-- [SoupX——去除RNA污染](https://mp.weixin.qq.com/s/7g9Zo6IPqTafSjKCeAFNIQ)
-- [使用DecontX预测和去除单细胞转录组的环境游离RNA污染](https://mp.weixin.qq.com/s/ndt9Fsgg5dNxIOh9m7j9Bw)
-- [是否细胞周期矫正，去除双细胞和环境RNA污染——单细胞入门到进阶(初级篇2）](https://mp.weixin.qq.com/s/HgTVwfDfE4lzBXJKihlknA)
-- [还在纠结双细胞质控方法吗！一文说清楚](https://mp.weixin.qq.com/s/64hB2cj-NwojuZbdiyEGzg)
-- [单细胞数据质控-双细胞预测-scrublet使用教程](https://mp.weixin.qq.com/s/EY4psNxQRIs0c-9OXhDUqA)
+> **Sincerely thank all teachers and researchers who provide open source resources**
+> 1. [SoupX——去除RNA污染](https://mp.weixin.qq.com/s/7g9Zo6IPqTafSjKCeAFNIQ)
+> 2. [使用DecontX预测和去除单细胞转录组的环境游离RNA污染](https://mp.weixin.qq.com/s/ndt9Fsgg5dNxIOh9m7j9Bw)
+> 3. [是否细胞周期矫正，去除双细胞和环境RNA污染——单细胞入门到进阶(初级篇2）](https://mp.weixin.qq.com/s/HgTVwfDfE4lzBXJKihlknA)
+> 4. [*生信钱同学*·全代码干货奉上——多样本多方案去除单细胞环境RNA污染——这次把这个聊清楚](https://mp.weixin.qq.com/s/1eJq3u-aKpQaL9CM7bV94g)
+> 4. [单细胞去噪工具一览](https://mp.weixin.qq.com/s/78RC4qH_Kw_eb-rql_QGjg)
+![scCDC对各个去污工具的评估](../png/scCDC_ability.png)
+> 5. [还在纠结双细胞质控方法吗！一文说清楚](https://mp.weixin.qq.com/s/64hB2cj-NwojuZbdiyEGzg)
+![doublecell](../png/doublecell_ability.png)
 
 
 ---
 # Coder
-- **Coder:** yangdong(yangdong@genomics.cn)
-- **Github:** [ydgenomics](https://github.com/ydgenomics)
-- **Prospect:** Do interesting and competitive works, open source, make progress and collaboration!
-- **Repository:** [WDL/Dataget](https://github.com/ydgenomics/WDL/tree/main/Dataget)
-- **Log:**
-  - 1.2.2
-    - 0916 如果scrublet分群在低分辨率下分群数小于等于0时不运行`rank_genes_groups`
-    - 0827 更新Description
-    - 0814 soupx后的数据会与两两不一样，增加添加splice和unsplice的元素不一样的判断(0814); doublet判断的图像缺失；缺少splice文件的问题；figure config的问题，已经注释掉(0814)
-    - 1.2.2  250806 为`merge`增加了长度判断，对于无对照组即分组小于2的输入则不做merge
-    - 250805
-      - scrublet的结果存储在`.obs['predicted_doublet']` & `.obs['doublet_score']`去除`predicted_doublet`中为`True`的细胞，可视化中若`predicted_doublet`的umap为空则说明全是`False`，scanpy可视化umap至少两个及其以上变量数目。
-      - 当缺少splice和unsplice矩阵或后续分析不涉及RNA Velocity时，可以不输入`SpliceMatrix`和`UnspliceMatrix`，为保证流程运行会将`FilterMatrix`/`SoupX结果`同时作为`SpliceMatrix`和`UnspliceMatrix`的输入。
-      - `.X`里面是标准化后的矩阵，如果转rds应该先`adata.X=adata.layers['counts'].copy()`保证`.X`为原始数据。
-      - 最新的脚本代码仓库[Dataget/v1.2.2](https://github.com/ydgenomics/WDL/tree/main/Dataget/v1.2.2)
-  - 1.2.1
-    - 修改为Dataget流程，支持多分组数据一次投递，新增子任务`merge`做.h5ad转.rds并merge做Seurat的标准化，该对象可用于后面做**Similarity**分析
-  - 1.2.0
-    - 0606 修改因`CreateSeuratObject()`自动更改基因名中'_'为'-'的问题，将task封装为函数即`run_*`；另外在流程部署上取消了脚本封装，避免多次保存环境和公布流程引起的维护问题，样本间concat也是取并集，尽量保存多的特征信息；另外在三个矩阵合并时基因取并集，至于细胞感觉也取并集，保留更多信息。
-    - 20250516 统一了输出的marker基因csv包含的列`gene,cluster,p_val_adj,avg_log2FC`，便于下游分析；另外对多个resolution的marker基因的pdf和csv进行了保存`0.5, 0.8, 1.0`
-    - 20250507 修改了三个矩阵存在细胞数不同的情况(Soupx处理后的矩阵)--取交集，修改了可视化pct_counts_mt的判断
-    - 20250429 修改了三个矩阵整合为取基因的交集，另外为scrublet_estimate_doublecell.py运行添加了` > log.txt 2>&1`，用于保存运行过程信息
-    - 20250417 优化了三个矩阵得到一个对象的基因选择，都以FilterMatrix为基准
-    - 20250414 1.引入了splice和unsplice矩阵到anndata对象的layers中，有利于后面的RNA velocity分析; 2.将sample名作为后缀加到细胞名后面，保证了每个样本的细胞名不重复; 3.根据SoupX的默认参数maxrho为0.2，根据样本实际情况调整; 4.放弃了原先的大目录检索，之前的不利于流程维护，更加推荐大家使用表格投递任务
-  - 1.0.0
-    - 20250305 修复了无线粒体基因和有线粒体基因数据在QC质控的判断
+  - **Coder:** yangdong(yangdong@genomics.cn)
+  - **Github:** [ydgenomics](https://github.com/ydgenomics)
+  - **Prospect:** Do interesting and competitive works, open source, make progress and collaboration!
+  - **Repository:** [WDL/Dataget]()

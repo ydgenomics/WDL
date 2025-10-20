@@ -2,154 +2,50 @@
 - **Brief:** SoupX去除环境污染，scrublet评估双胞并去除预测为双胞的细胞，质控后用scanpy做标准化、降维、聚类、Marker和可视化
 - **Fature:** 使用更新更适合数据的质控软件
 - **Log:**
-  - 1.2.3 250929
-    1. 提供了更多的软件方案
-      - Correction of ambient RNA: SoupX(R), scCDC(R)
-      - Doublet Detection: scrublet(python), scDblFinder(R)
-    2. 新加CHOIR作为最优分群(02_CHOIR)，并用Metaneighbor找到biosample的批次下各个cluster的相似性(03_Similarity)，并输出统一meta.data和obs信息的rds和h5ad文件(OUTPUT)
-    3. scrublet添加可选双胞分数来过滤，默认按predict判断为TRUE进行过滤，如果输入doublet_threshold将按最大分数过滤
-    4. SoupX取消生成污染评估pdf文件，并将污染值整合到最后的summary.txt中
-    5. Array[Array[File]]输入调整为Array[File]，要求biosample_value数量要与sample一致，shell命令通过unique值进行分组
-    6. 对于多个文件输入不再用.txt的方法，直接用`'~{sep="," variable}'`来实现多个对象的输入
-    7. 减少输入变量，对于缺少或后续不需要RNAvelocity分析的项目可不添加对应的layers，节约内存资源(提前到矩阵读取前面)
-    8. 01_Dataget, 02_Seurat, 03_CHOIR, 04_Similarity, output(Seurat+scanpy)
-- **Tradition:** dataget_scRNAseq
-
+  - 1.2.3 251020
+    1. scrublet添加可选双胞分数来过滤，默认按predict判断为TRUE进行过滤，如果输入doublet_threshold将按最大分数过滤
+    2. SoupX取消生成污染评估pdf文件，并将污染值整合到最后的summary.txt中
+    3. Array[Array[File]]输入调整为Array[File]，要求biosample_value数量要与sample一致，shell命令通过unique值进行分组
+    4. 对于多个文件输入不再用.txt的方法，直接用`'~{sep="," variable}'`来实现多个对象的输入
+    5. 减少输入变量，对于缺少或后续不需要RNAvelocity分析的项目可不添加对应的layers，节约内存资源(提前到矩阵读取前面)
 
 ---
 # Input
 - **Variable:**
-  - `RawMatrix` Array[Array[File]] 原始矩阵，同一分组下的数据在小list里面，大list代表不同分组数据
-  - `FilterMatrix` Array[Array[File]] 质控过的矩阵，同上一一对应
-  - `SpliceMatrix` Array[Array[File]] 剪切矩阵，同上一一对应，如无可以用FilterMatrix作为输入来保证流程正常运行，结果在.layers[splice]
-  - `UnspliceMatrix` Array[Array[File]] 非剪切矩阵，同上一一对应，如无可以用FilterMatrix作为输入来保证流程正常运行,结果在.layers[unsplice]
-  - `sample_value` Array[Array[String]] 自定义的样本信息，同上一一对应
-  - `biosample_value` Array [String] 自定义的分组信息，对应大list
-  - `species` String 自定义名称作为输出文件后缀
+  - `RawMatrix` Array[File] 原始矩阵
+  - `FilterMatrix` Array[File] 质控过的矩阵，顺序对应
+  - `SpliceMatrix` Array[File] 剪切矩阵，顺序对应，非必填项，如无或者后续不做RNA velocity分析，可不填，结果在.layers[splice]
+  - `UnspliceMatrix` Array[File] 非剪切矩阵，顺序对应，非必填项，如无或者后续不做RNA velocity分析，可不填，结果在.layers[unsplice]
+  - `sample_value` Array[String] 自定义的样本信息，顺序对应
+  - `biosample_value` Array[String] 自定义的分组信息，顺序对应
+  - `prefix` String 自定义名称作为输出文件后缀
   - `mem_soupx` Int soupx的资源(GB)
   - `mem_scrublet` Int scrublet的资源(GB)
   - `mem_merge` Int merge的资源(GB)
-  - `mitogenes_txt` File 线粒体基因列表
-  - `mito_threshold` Int 线粒体基因最高占比，默认为5
+  - `doublet_threshold` Float 根据scrublet的doublet_score进行过滤，非必填项，为空则按预测为true的进行去双胞
+  - `mitogenes_csv` File 线粒体基因列表
 
 
 - **csv** [download](https://github.com/ydgenomics/WDL/blob/main/Dataget/v1.2.3/Dataget_v1.2.3.csv) 
 - **Example** 
 
-| EntityID | RawMatrix1 | RawMatrix2 | FilterMatrix1 | FilterMatrix2 | SpliceMatrix1 | SpliceMatrix2 | UnspliceMatrix1 | UnspliceMatrix2 | sample_value1 | sample_value2 | biosample_value | species |
-|-|-|-|-|-|-|-|-|-|-|-|-|-|
-| test_peanut | /Files/husasa/anther-241218/H1314/V3RNA24120200006-2/HS-V3RNA24120200006/output/raw_matrix | /Files/husasa/anther-241218/H1314/V3RNA24120200007/HS-V3RNA24120200007/output/raw_matrix | /Files/husasa/anther-241218/H1314/V3RNA24120200006-2/HS-V3RNA24120200006/output/filter_matrix | /Files/husasa/anther-241218/H1314/V3RNA24120200007/HS-V3RNA24120200007/output/filter_matrix | /Files/husasa/anther-241218/H1314/V3RNA24120200006-2/HS-V3RNA24120200006/output/attachment/splice_matrix | /Files/husasa/anther-241218/H1314/V3RNA24120200007/HS-V3RNA24120200007/output/attachment/splice_matrix | /Files/husasa/anther-241218/H1314/V3RNA24120200006-2/HS-V3RNA24120200006/output/attachment/RNAvelocity_matrix | /Files/husasa/anther-241218/H1314/V3RNA24120200007/HS-V3RNA24120200007/output/attachment/RNAvelocity_matrix | V3RNA24120200006 | V3RNA24120200007 | H1314 | peanut |
-| test_peanut | /Files/husasa/anther-241218/H2014/V3RNA24120200008_2/HS-V3RNA24120200008/output/raw_matrix | /Files/husasa/anther-241218/H2014/V3RNA24120200009/HS-V3RNA24120200009/output/raw_matrix | /Files/husasa/anther-241218/H2014/V3RNA24120200008_2/HS-V3RNA24120200008/output/filter_matrix | /Files/husasa/anther-241218/H2014/V3RNA24120200009/HS-V3RNA24120200009/output/filter_matrix | /Files/husasa/anther-241218/H2014/V3RNA24120200008_2/HS-V3RNA24120200008/output/attachment/splice_matrix | /Files/husasa/anther-241218/H2014/V3RNA24120200009/HS-V3RNA24120200009/output/attachment/splice_matrix | /Files/husasa/anther-241218/H2014/V3RNA24120200008_2/HS-V3RNA24120200008/output/attachment/RNAvelocity_matrix | /Files/husasa/anther-241218/H2014/V3RNA24120200009/HS-V3RNA24120200009/output/attachment/RNAvelocity_matrix | V3RNA24120200008 | V3RNA24120200009 | H2014 |  |
-
-
 ---
 # Output
 - **Frame**
 ```shell
-tree /data/input/Files/yangdong/wdl/SCP/Dataget/W202508040017201
-/data/input/Files/yangdong/wdl/SCP/Dataget/W202508040017201
-├── 01_dataget
-│   ├── H1314_dataget
-│   │   ├── figures
-│   │   │   ├── dotplot_leiden_res_0.50_marker.pdf
-│   │   │   ├── dotplot_leiden_res_0.80_marker.pdf
-│   │   │   ├── dotplot_leiden_res_1.00_marker.pdf
-│   │   │   ├── pca_potentially_undesired_features.pdf
-│   │   │   ├── umap_batch.pdf
-│   │   │   ├── umap_leiden_clus.pdf
-│   │   │   └── umap_quality.pdf
-│   │   ├── H1314.h5ad
-│   │   ├── marker_csv
-│   │   │   ├── leiden_res_0.50.markers.csv
-│   │   │   ├── leiden_res_0.80.markers.csv
-│   │   │   └── leiden_res_1.00.markers.csv
-│   │   ├── qc.pdf
-│   │   └── summary.txt
-│   ├── H1314_soupx_dataget
-│   │   ├── figures
-│   │   │   ├── dotplot_leiden_res_0.50_marker.pdf
-│   │   │   ├── dotplot_leiden_res_0.80_marker.pdf
-│   │   │   ├── dotplot_leiden_res_1.00_marker.pdf
-│   │   │   ├── pca_potentially_undesired_features.pdf
-│   │   │   ├── umap_batch.pdf
-│   │   │   ├── umap_leiden_clus.pdf
-│   │   │   └── umap_quality.pdf
-│   │   ├── H1314_soupx.h5ad
-│   │   ├── marker_csv
-│   │   │   ├── leiden_res_0.50.markers.csv
-│   │   │   ├── leiden_res_0.80.markers.csv
-│   │   │   └── leiden_res_1.00.markers.csv
-│   │   ├── qc.pdf
-│   │   ├── summary.txt
-│   │   ├── V3RNA24120200006_rho.pdf
-│   │   ├── V3RNA24120200006_soupx_rho.txt
-│   │   ├── V3RNA24120200007_rho.pdf
-│   │   └── V3RNA24120200007_soupx_rho.txt
-│   ├── H2014_dataget
-│   │   ├── figures
-│   │   │   ├── dotplot_leiden_res_0.50_marker.pdf
-│   │   │   ├── dotplot_leiden_res_0.80_marker.pdf
-│   │   │   ├── dotplot_leiden_res_1.00_marker.pdf
-│   │   │   ├── pca_potentially_undesired_features.pdf
-│   │   │   ├── umap_batch.pdf
-│   │   │   ├── umap_leiden_clus.pdf
-│   │   │   └── umap_quality.pdf
-│   │   ├── H2014.h5ad
-│   │   ├── marker_csv
-│   │   │   ├── leiden_res_0.50.markers.csv
-│   │   │   ├── leiden_res_0.80.markers.csv
-│   │   │   └── leiden_res_1.00.markers.csv
-│   │   ├── qc.pdf
-│   │   └── summary.txt
-│   ├── H2014_soupx_dataget
-│   │   ├── figures
-│   │   │   ├── dotplot_leiden_res_0.50_marker.pdf
-│   │   │   ├── dotplot_leiden_res_0.80_marker.pdf
-│   │   │   ├── dotplot_leiden_res_1.00_marker.pdf
-│   │   │   ├── pca_potentially_undesired_features.pdf
-│   │   │   ├── umap_batch.pdf
-│   │   │   ├── umap_leiden_clus.pdf
-│   │   │   └── umap_quality.pdf
-│   │   ├── H2014_soupx.h5ad
-│   │   ├── marker_csv
-│   │   │   ├── leiden_res_0.50.markers.csv
-│   │   │   ├── leiden_res_0.80.markers.csv
-│   │   │   └── leiden_res_1.00.markers.csv
-│   │   ├── qc.pdf
-│   │   ├── summary.txt
-│   │   ├── V3RNA24120200008_rho.pdf
-│   │   ├── V3RNA24120200008_soupx_rho.txt
-│   │   ├── V3RNA24120200009_rho.pdf
-│   │   └── V3RNA24120200009_soupx_rho.txt
-│   ├── peanut
-│   │   ├── H1314.hr.rds
-│   │   ├── H2014.hr.rds
-│   │   ├── peanut_merge.pdf
-│   │   ├── peanut_merge.rds
-│   │   ├── saved_layers.txt
-│   │   └── saved_paths.txt
-│   └── peanut_soupx
-│       ├── H1314_soupx.hr.rds
-│       ├── H2014_soupx.hr.rds
-│       ├── peanut_soupx_merge.pdf
-│       ├── peanut_soupx_merge.rds
-│       ├── saved_layers.txt
-│       └── saved_paths.txt
-└── input.json
 
-16 directories, 73 files
 ```
 
 - **Next**
   - Anno 细胞注释
   - Similarity 分组数据cluster间的相似性
-  - anno_sctype 以细胞类型对应的高质量marker基因(.csv)为基础用sctype做注释加新键sctype
-  - anno_singler
-  - Integration_scIB
+  - Anno_sctype 以细胞类型对应的高质量marker基因(.csv)为基础用sctype做注释加新键sctype
+  - Anno_singler 
+  - Integration_scIB 整合去批次
 
 
 - **Interpretation**
-  - 每个样本污染值评估(.pdf & .txt)
+  - 每个样本污染值评估(summary.txt)
   - scanpy做去双胞后标准化流程(标准化、降维、聚类、找分群marker基因和可视化)，以dataget结尾的目录是未做SoupX处理的，soupx_dataget结尾的目录是做了SoupX再做的scrublet [Interpretation of results](https://mp.weixin.qq.com/s/xsxtCRFCi-y_3unfOkT-kQ)
   - 其它目录是子任务merge做的h5ad转rds后的整合(Seurat), rds都做过标准化，可以直接用于后续的anno系列流程
 
@@ -174,8 +70,8 @@ tree /data/input/Files/yangdong/wdl/SCP/Dataget/W202508040017201
     - `input_mincells` 默认去除不满足大于3个细胞都有表达的基因
 
 - **Script:**
-  - scrublet_estimate.py
-  - soupx.R
+  - run_scrublet.py
+  - run_soupx.R
   - merge_subset.R
 
 - **Image:**

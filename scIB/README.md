@@ -1,10 +1,9 @@
-# single cell Integration Benchmarking(scIB)
+# single cell Integration Benchmarking(scIB) with [scib-metrics](https://scib-metrics.readthedocs.io/en/stable/#)
 - **Brief:** 对多种整合去批次方法进行测评，用.obsm里面的PCA数据
 - **Fature** 更新scib-metrics到v.0.5.5
 - **Log:**
   - v1.0.1 
     - 250828 更新Description
-- **Related:** *scIB* *Integration_scIB* *multi_samples_scRNAseq_integration*
 
 ---
 # Input
@@ -21,21 +20,9 @@
   - `mem_scdatacg` Int 运行scdatacg需要的内存资源
   - `mem_scib` Int 运行mem_scib需要的内存资源
 
-**Note**: scib-metrics计算的十个指标(BioConservation: isolated_labels, nmi_ari_cluster_labels_leiden, nmi_ari_cluster_labels_kmeans, silhouette_label, clisi_knn; BatchCorrection: silhouette_batch, ilisi_knn, kbet_per_label, graph_connectivity, pcr_comparison); 需要重新计算pca的是`seuratRPCA`方法; 资源投递参考项目数据大小调整
+**Note**: ; 需要重新计算pca的是`seuratRPCA`方法; 资源投递参考项目数据大小调整
 - **Example** [download](https://github.com/ydgenomics/WDL/blob/main/scIB/v1.0.1/scIB_v1.0.1.csv)
 
-| EntityID | unintegrated_h5ad | integrated_file | species | batch_key | label_key | methods_file | pcas_file | deals_file | tests_file | mem_scdatacg | mem_scib |
-|-|-|-|-|-|-|-|-|-|-|-|-|
-| test_peanut | /Files/yangdong/wdl/SCP/Integration/W202508090027545/03_integration/peanut_unintegration_integrated.h5ad | /Files/yangdong/wdl/SCP/Integration/W202508090027545/03_integration/peanut_BBKNNR_integrated.rds | peanut | biosample | anno1 | BBKNNR | X_pca | N | true | 8 | 32 |
-| test_peanut |  | /Files/yangdong/wdl/SCP/Integration/W202508090027545/03_integration/peanut_harmony_integrated.h5ad |  |  |  | harmony | X_pca_harmony | N | true |  |  |
-| test_peanut |  | /Files/yangdong/wdl/SCP/Integration/W202508090027545/03_integration/peanut_rliger.INMF_integrated.rds |  |  |  | rliger.INMF | X_inmf | N | true |  |  |
-| test_peanut |  | /Files/yangdong/wdl/SCP/Integration/W202508090027545/03_integration/peanut_scVI_integrated.h5ad |  |  |  | scVI | X_scVI | N | true |  |  |
-| test_peanut |  |  |  |  |  |  |  | N | true |  |  |
-| test_peanut |  |  |  |  |  |  |  | N | true |  |  |
-| test_peanut |  |  |  |  |  |  |  |  | true |  |  |
-| test_peanut |  |  |  |  |  |  |  |  | true |  |  |
-| test_peanut |  |  |  |  |  |  |  |  | true |  |  |
-| test_peanut |  |  |  |  |  |  |  |  | true |  |  |
 
 ---
 # Output
@@ -50,9 +37,10 @@ tree /data/input/Files/yangdong/wdl/SCP/Integration/W202508120010920/scib
 1 directory, 3 files
 ```
 - **Interpretation**
-  - `.csv` 评测结果
   - `.h5ad` 包含多个整合方法的降维pca数据于.obsm
-  - `.pdf` 可视化`.csv`
+    - **NOTE:** scIB.py脚本输出的.h5ad里面的distances和connectivities保留的是unintegrated的。如果在后续分析中用到对应的整合的方法时，应该先用`sc.pp.neighbors(adata, use_rep=)`更换该部分数据。
+  - `.pdf`是对评测结果`.csv`的可视化
+    - scib-metrics计算的十个指标(BioConservation: isolated_labels, nmi_ari_cluster_labels_leiden, nmi_ari_cluster_labels_kmeans, silhouette_label, clisi_knn; BatchCorrection: silhouette_batch, ilisi_knn, kbet_per_label, graph_connectivity, pcr_comparison)
   
 ---
 # Detail
@@ -67,8 +55,29 @@ tree /data/input/Files/yangdong/wdl/SCP/Integration/W202508120010920/scib
 - **Image**
   - scIB-py--02, scIB-py--01
 
+```shell
+source /opt/software/miniconda3/bin/activate
+conda create -n scib python=3.11 -y
+conda activate scib
+conda config --remove-key channels
+conda config --add channels defaults
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+conda install -c conda-forge gcc=12 gxx=12 -y
+conda install conda-forge::h5py -y
+pip install scib-metrics # Python >=3.11
+
+conda install conda-forge::scanpy -y
+pip install --use-pep517 bbknn #pip install bbknn
+conda install conda-forge::ipykernel -y
+```
+- **Think**
+  - 251014 scib-metrics只用输入obsm的pca数据，对于BBKNN的结果，怎么输入其neighbors数据?截止于2025/10/14这仍然是一个[bug](https://github.com/YosefLab/scib-metrics/issues/232)，single-cell-best-practice与scib是同一个实验室，他们仍然使用scib去实现benchmarking。
+
 ---
 # Reference & Citation
+- [https://scib.readthedocs.io/en/latest/index.html](https://scib.readthedocs.io/en/latest/index.html)
+- [https://theislab.github.io/scib-reproducibility/index.html](https://theislab.github.io/scib-reproducibility/index.html)
 > [Cell Syst. | 数据驱动的单细胞组学数据批次推理的端到端框架](https://mp.weixin.qq.com/s/WtvySAJ8WszGCInCAkDZXA) [Article](https://doi.org/10.1016/j.cels.2024.09.003) **SPEEDI**首次引入了自动化的数据驱动批次推断方法，突破了批次效应未知或记录不全所带来的限制。SPEEDI中的批次推断方法设计的目的是识别由不同来源（包括未知技术偏差）所产生的数据定义批次。其核心假设为：来自不同样本中相同细胞类型的数据应该比每个样本中的不同细胞类型更相似。如果我们发现两个样本中的相同类型细胞反而不相似，那就可能是受到了批次效应的影响。
 > [Nat Biotechnol |单细胞经常用轮廓系数评估整合效果的方法，可能存在缺陷。并给出了推荐方案](https://mp.weixin.qq.com/s/EkK0q16E1zwS-pbDK0ziaw) 单细胞数据整合评估应结合批次去除和生物信号保留两类指标，且指标选择需与研究目标匹配。目前，BRAS 已被纳入 scib-metrics 软件包（版本 0.5.5），为研究者提供更可靠的评估工具
 > [ROGUE: 【张院士团队R包】一种基于熵的用于评估单细胞群体纯度的度量标准](https://mp.weixin.qq.com/s/51jDBZMPjYFBmblHTZ-7xQ)

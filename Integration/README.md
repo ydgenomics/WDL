@@ -101,19 +101,20 @@ tree /data/input/Files/yangdong/wdl/SCP/Integration/W202508120010920/03_integrat
 
 ---
 # Reference & Citation
-> [Nat Mach Intell｜南开开发新单细胞整合方法，消除批次效应的同时，保留细胞生物学异质性](https://mp.weixin.qq.com/s/MeE3tNOtlo0KEsK7ThlHlg) 为单细胞染色质可及性测序（scATAC-seq）数据整合提供全新解决方案
-> [NC|强烈推荐国内最新发表单细胞多模态整合算法的全面基准评估平台](https://mp.weixin.qq.com/s/dqnYB-Zs9jfH8AXSCmdR4A) 多组学整合
-> [Cell Syst. | 数据驱动的单细胞组学数据批次推理的端到端框架](https://mp.weixin.qq.com/s/WtvySAJ8WszGCInCAkDZXA) [Article](https://doi.org/10.1016/j.cels.2024.09.003) **SPEEDI**首次引入了自动化的数据驱动批次推断方法，突破了批次效应未知或记录不全所带来的限制。SPEEDI中的批次推断方法设计的目的是识别由不同来源（包括未知技术偏差）所产生的数据定义批次。其核心假设为：来自不同样本中相同细胞类型的数据应该比每个样本中的不同细胞类型更相似。如果我们发现两个样本中的相同类型细胞反而不相似，那就可能是受到了批次效应的影响。
-> [Nat Biotechnol |单细胞经常用轮廓系数评估整合效果的方法，可能存在缺陷。并给出了推荐方案](https://mp.weixin.qq.com/s/EkK0q16E1zwS-pbDK0ziaw) 单细胞数据整合评估应结合批次去除和生物信号保留两类指标，且指标选择需与研究目标匹配。目前，BRAS 已被纳入 scib-metrics 软件包（版本 0.5.5），为研究者提供更可靠的评估工具
-> [Nature Methods|单细胞多组学整合的实用指南：68个算法工具大测评](https://mp.weixin.qq.com/s/khWi2m1DMXvE8pwivJcAMw) [68 种单细胞批次整合方法的比较，作者附上了分析的代码，做大规模数据库挖掘的同学好好学习一下](https://mp.weixin.qq.com/s/Gkm4u1CW-mAAtCePXwSSsQ)
-> [Genome Biology|单细胞转录组整合算法：iMAP](https://mp.weixin.qq.com/s/tXruEFQtaLwiiPEwyYxSDg) [Article](https://doi.org/10.5281/zenodo.4461029) 基于深度学习的单细胞整合方法
-> [ROGUE: 【张院士团队R包】一种基于熵的用于评估单细胞群体纯度的度量标准](https://mp.weixin.qq.com/s/51jDBZMPjYFBmblHTZ-7xQ)
-> [单细胞数据整合分析攻略——华山论剑版](https://mp.weixin.qq.com/s/Vt9mrQeZ8QUKwSY5S6bQkg)
-> [单细胞多样本整合和插槽选择（一）](https://mp.weixin.qq.com/s/fZW3qCBrQLNLt7aRRkWvvA) CCA结果的integrated assay什么时候使用
-> [热点综述 | 跨模态单细胞分析的最佳实践](https://mp.weixin.qq.com/s/zBPxU37nPSXnrpeMmJz_og)
-> [单细胞整合用哪种方法好，北大张泽民院士的这篇Cancer Cell直接解决了咱们的困惑](https://mp.weixin.qq.com/s/DK91JN-hsYSZW0BaMeetxw)
-> [单细胞入门(三) | 在Seurat v5中使用sctransform normalization](https://mp.weixin.qq.com/s/12YufWzk_Ql90NlTOjyOcw)
-> [Nature Biotechnology || 2024 || CellANOVA：恢复单细胞数据批次整合中丢失的生物信号](https://mp.weixin.qq.com/s/DaOwkjVMuoxBAXq7CHhKFA)
+- [《单细胞最佳实践》——数据整合部分详细解读 · 续](https://mp.weixin.qq.com/s/zBRLeP9Xs1KaOdCyXIxZmw)
+- [Nat Mach Intell｜南开开发新单细胞整合方法，消除批次效应的同时，保留细胞生物学异质性](https://mp.weixin.qq.com/s/MeE3tNOtlo0KEsK7ThlHlg) 为单细胞染色质可及性测序（scATAC-seq）数据整合提供全新解决方案
+- [NC|强烈推荐国内最新发表单细胞多模态整合算法的全面基准评估平台](https://mp.weixin.qq.com/s/dqnYB-Zs9jfH8AXSCmdR4A) 多组学整合
+- [Cell Syst. | 数据驱动的单细胞组学数据批次推理的端到端框架](https://mp.weixin.qq.com/s/WtvySAJ8WszGCInCAkDZXA) [Article](https://doi.org/10.1016/j.cels.2024.09.003) **SPEEDI**首次引入了自动化的数据驱动批次推断方法，突破了批次效应未知或记录不全所带来的限制。SPEEDI中的批次推断方法设计的目的是识别由不同来源（包括未知技术偏差）所产生的数据定义批次。其核心假设为：来自不同样本中相同细胞类型的数据应该比每个样本中的不同细胞类型更相似。如果我们发现两个样本中的相同类型细胞反而不相似，那就可能是受到了批次效应的影响。
+- [Nat Biotechnol |单细胞经常用轮廓系数评估整合效果的方法，可能存在缺陷。并给出了推荐方案](https://mp.weixin.qq.com/s/EkK0q16E1zwS-pbDK0ziaw) 单细胞数据整合评估应结合批次去除和生物信号保留两类指标，且指标选择需与研究目标匹配。目前，BRAS 已被纳入 scib-metrics 软件包（版本 0.5.5），为研究者提供更可靠的评估工具
+- [Nature Methods|单细胞多组学整合的实用指南：68个算法工具大测评](https://mp.weixin.qq.com/s/khWi2m1DMXvE8pwivJcAMw) [68 种单细胞批次整合方法的比较，作者附上了分析的代码，做大规模数据库挖掘的同学好好学习一下](https://mp.weixin.qq.com/s/Gkm4u1CW-mAAtCePXwSSsQ)
+- [Genome Biology|单细胞转录组整合算法：iMAP](https://mp.weixin.qq.com/s/tXruEFQtaLwiiPEwyYxSDg) [Article](https://doi.org/10.5281/zenodo.4461029) 基于深度学习的单细胞整合方法
+- [ROGUE: 【张院士团队R包】一种基于熵的用于评估单细胞群体纯度的度量标准](https://mp.weixin.qq.com/s/51jDBZMPjYFBmblHTZ-7xQ)
+- [单细胞数据整合分析攻略——华山论剑版](https://mp.weixin.qq.com/s/Vt9mrQeZ8QUKwSY5S6bQkg)
+- [单细胞多样本整合和插槽选择（一）](https://mp.weixin.qq.com/s/fZW3qCBrQLNLt7aRRkWvvA) CCA结果的integrated assay什么时候使用
+- [热点综述 | 跨模态单细胞分析的最佳实践](https://mp.weixin.qq.com/s/zBPxU37nPSXnrpeMmJz_og)
+- [单细胞整合用哪种方法好，北大张泽民院士的这篇Cancer Cell直接解决了咱们的困惑](https://mp.weixin.qq.com/s/DK91JN-hsYSZW0BaMeetxw)
+- [单细胞入门(三) | 在Seurat v5中使用sctransform normalization](https://mp.weixin.qq.com/s/12YufWzk_Ql90NlTOjyOcw)
+- [Nature Biotechnology || 2024 || CellANOVA：恢复单细胞数据批次整合中丢失的生物信号](https://mp.weixin.qq.com/s/DaOwkjVMuoxBAXq7CHhKFA)
 
 
 ---

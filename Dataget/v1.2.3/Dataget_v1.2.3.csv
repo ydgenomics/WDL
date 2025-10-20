@@ -1,0 +1,3 @@
+EntityID,RawMatrix,FilterMatrix,SpliceMatrix,UnspliceMatrix,sample_value,biosample_value,prefix
+Gh,/Files/P-Ref/Gossypium_hirsutum/SC/reproduce1/SRR31330970/outs/raw_feature_bc_matrix/,/Files/P-Ref/Gossypium_hirsutum/SC/reproduce1/SRR31330970/outs/filtered_feature_bc_matrix/,,,CCRI12,Gh,peanut
+Gh,/Files/P-Ref/Gossypium_hirsutum/SC/reproduce1/SRR31330969/outs/raw_feature_bc_matrix/,/Files/P-Ref/Gossypium_hirsutum/SC/reproduce1/SRR31330969/outs/filtered_feature_bc_matrix/,,,CCRI12gl,Gh,
