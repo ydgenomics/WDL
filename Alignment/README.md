@@ -7,6 +7,18 @@
     - 250828 提交Description
 
 ---
+
+
+## to-do
+- 支持提取子集基因的比对
+- 增添其它比对工具例如Orthofinder
+
+```shell
+# 单项比对拿到一对一的结果，适合小数据基因集的对应
+awk -F'\t' '!seen1[$1]++ && !seen2[$2]++' /data/work/rename/blastp/result/blastp_subset.pep_vs_Sp_pep.fa.txt > unique_one_to_one.txt
+awk '!seen[$1]++' /data/work/rename/blastp/result/blastp_Sp_pep.fa_vs_at.pep.txt > unique_Sp_results.txt
+```
+
 # Input
 - **Variable**
   - `fasta1` 待比对的蛋白质序列fasta文件
